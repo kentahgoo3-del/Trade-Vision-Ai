@@ -71,8 +71,12 @@ export default function ChatScreen() {
           text: 'Delete',
           style: 'destructive',
           onPress: async () => {
-            await deleteConvo({ id });
-            queryClient.invalidateQueries({ queryKey: getListOpenaiConversationsQueryKey() });
+            try {
+              await deleteConvo({ id });
+              queryClient.invalidateQueries({ queryKey: getListOpenaiConversationsQueryKey() });
+            } catch {
+              Alert.alert('Error', 'Could not delete this conversation. Please try again.');
+            }
           },
         },
       ]

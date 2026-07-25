@@ -242,12 +242,16 @@ export default function AnalysisDetailScreen() {
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Delete', style: 'destructive', onPress: async () => {
-          await deleteAnalysis({ id: Number(id) });
-          queryClient.invalidateQueries({ queryKey: getListAnalysesQueryKey() });
-          queryClient.invalidateQueries({ queryKey: getListRecentAnalysesQueryKey() });
-          queryClient.invalidateQueries({ queryKey: getGetPortfolioSummaryQueryKey() });
-          queryClient.invalidateQueries({ queryKey: getGetAnalysisStatsQueryKey() });
-          router.back();
+          try {
+            await deleteAnalysis({ id: Number(id) });
+            queryClient.invalidateQueries({ queryKey: getListAnalysesQueryKey() });
+            queryClient.invalidateQueries({ queryKey: getListRecentAnalysesQueryKey() });
+            queryClient.invalidateQueries({ queryKey: getGetPortfolioSummaryQueryKey() });
+            queryClient.invalidateQueries({ queryKey: getGetAnalysisStatsQueryKey() });
+            router.back();
+          } catch {
+            Alert.alert('Error', 'Could not delete the analysis. Please try again.');
+          }
         },
       },
     ]);

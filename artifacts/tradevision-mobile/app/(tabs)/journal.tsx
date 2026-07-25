@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Platform,
   Pressable,
   ScrollView,
@@ -11,11 +12,19 @@ import {
 import { Icon } from '@/components/Icon';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useQueryClient } from '@tanstack/react-query';
 import { useColors } from '@/hooks/useColors';
 import { JournalCard } from '@/components/JournalCard';
 import { StatCard } from '@/components/StatCard';
 import { EmptyState } from '@/components/EmptyState';
-import { useListJournalEntries, useGetJournalStats } from '@workspace/api-client-react';
+import {
+  useListJournalEntries,
+  useGetJournalStats,
+  useDeleteJournalEntry,
+  getListJournalEntriesQueryKey,
+  getGetJournalStatsQueryKey,
+  getGetPortfolioSummaryQueryKey,
+} from '@workspace/api-client-react';
 
 type Filter = 'all' | 'win' | 'loss' | 'open';
 
@@ -23,11 +32,35 @@ export default function JournalScreen() {
   const colors = useColors();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const queryClient = useQueryClient();
   const topPad = Platform.OS === 'web' ? 67 : insets.top;
 
   const { data: entries, isLoading } = useListJournalEntries();
   const { data: stats } = useGetJournalStats();
+  const { mutateAsync: deleteEntry } = useDeleteJournalEntry();
   const [filter, setFilter] = useState<Filter>('all');
+
+  const handleDelete = (id: number, symbol: string) => {
+    Alert.alert('Delete entry?', `Remove the ${symbol} trade from your journal?`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            // Optimistic removal
+            queryClient.cancelQueries({ queryKey: getListJournalEntriesQueryKey() });
+            await deleteEntry({ id });
+            queryClient.invalidateQueries({ queryKey: getListJournalEntriesQueryKey() });
+            queryClient.invalidateQueries({ queryKey: getGetJournalStatsQueryKey() });
+            queryClient.invalidateQueries({ queryKey: getGetPortfolioSummaryQueryKey() });
+          } catch {
+            Alert.alert('Error', 'Could not delete this entry. Please try again.');
+          }
+        },
+      },
+    ]);
+  };
 
   const filtered = entries?.filter((e) => {
     if (filter === 'all') return true;
@@ -117,6 +150,7 @@ export default function JournalScreen() {
               key={e.id}
               entry={e}
               onPress={() => router.push(`/journal/${e.id}`)}
+              onDelete={() => handleDelete(e.id, e.symbol)}
             />
           ))
         )}

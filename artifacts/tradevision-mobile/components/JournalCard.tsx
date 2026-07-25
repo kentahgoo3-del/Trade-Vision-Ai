@@ -1,16 +1,48 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Icon } from '@/components/Icon';
+import ReanimatedSwipeable, { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Animated, { SharedValue, useAnimatedStyle } from 'react-native-reanimated';
 import { useColors } from '@/hooks/useColors';
 import type { JournalEntry } from '@workspace/api-client-react';
 
 interface Props {
   entry: JournalEntry;
   onPress?: () => void;
+  onDelete?: () => void;
 }
 
-export function JournalCard({ entry, onPress }: Props) {
+function RightAction({
+  drag,
+  onDelete,
+}: {
+  drag: SharedValue<number>;
+  onDelete?: () => void;
+}) {
   const colors = useColors();
+  const style = useAnimatedStyle(() => ({
+    transform: [{ translateX: drag.value + 72 }],
+  }));
+  return (
+    <Animated.View style={[styles.deleteAction, style]}>
+      <Pressable
+        style={[styles.deleteBtn, { backgroundColor: colors.destructive }]}
+        onPress={() => {
+          // Call onDelete directly — do NOT close() the swipeable first,
+          // as the close animation races with Alert.alert on Android.
+          onDelete?.();
+        }}
+      >
+        <Icon name="trash-outline" size={20} color={colors.destructiveForeground} />
+        <Text style={[styles.deleteBtnText, { color: colors.destructiveForeground }]}>Delete</Text>
+      </Pressable>
+    </Animated.View>
+  );
+}
+
+export function JournalCard({ entry, onPress, onDelete }: Props) {
+  const colors = useColors();
+  const swipeableRef = useRef<SwipeableMethods | null>(null);
 
   const outcomeColor =
     entry.outcome === 'win' ? colors.bullish :
@@ -24,7 +56,7 @@ export function JournalCard({ entry, onPress }: Props) {
 
   const dirColor = entry.direction === 'long' ? colors.bullish : colors.bearish;
 
-  return (
+  const card = (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [
@@ -71,6 +103,21 @@ export function JournalCard({ entry, onPress }: Props) {
       ) : null}
     </Pressable>
   );
+
+  if (!onDelete) return card;
+
+  return (
+    <ReanimatedSwipeable
+      ref={swipeableRef}
+      friction={2}
+      rightThreshold={40}
+      renderRightActions={(_, drag) => (
+        <RightAction drag={drag} onDelete={onDelete} />
+      )}
+    >
+      {card}
+    </ReanimatedSwipeable>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -98,4 +145,22 @@ const styles = StyleSheet.create({
   outcomeLabel: { fontSize: 11, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 },
   pnl: { fontSize: 15, fontFamily: 'Inter_700Bold' },
   notes: { fontSize: 12, fontFamily: 'Inter_400Regular' },
+  deleteAction: {
+    width: 72,
+    marginBottom: 10,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  deleteBtn: {
+    width: 72,
+    height: '100%',
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+  },
+  deleteBtnText: {
+    fontSize: 11,
+    fontFamily: 'Inter_600SemiBold',
+  },
 });

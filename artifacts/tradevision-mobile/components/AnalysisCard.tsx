@@ -52,7 +52,10 @@ function RightAction({
       <Pressable
         style={[styles.deleteBtn, { backgroundColor: colors.destructive }]}
         onPress={() => {
-          swipeableRef.current?.close();
+          // Call onDelete directly — Alert.alert fires immediately.
+          // Do NOT close() the swipeable first: the close animation races
+          // with the native Alert on some Android devices and the dialog
+          // never appears. The item will disappear via optimistic removal.
           onDelete?.();
         }}
       >

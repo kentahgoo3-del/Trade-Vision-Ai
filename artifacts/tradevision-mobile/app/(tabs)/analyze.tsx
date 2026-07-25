@@ -77,9 +77,13 @@ export default function AnalyzeScreen() {
   const commitDelete = React.useCallback(async (id: string, prevData: Analysis[] | undefined) => {
     try {
       await deleteAnalysis({ id: Number(id) });
-      queryClient.invalidateQueries({ queryKey: getListAnalysesQueryKey() });
-      queryClient.invalidateQueries({ queryKey: getListRecentAnalysesQueryKey() });
-      queryClient.invalidateQueries({ queryKey: getGetPortfolioSummaryQueryKey() });
+      // Invalidate after a short delay so the optimistic removal stays
+      // visible — prevents a background refetch from briefly restoring the item
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: getListAnalysesQueryKey() });
+        queryClient.invalidateQueries({ queryKey: getListRecentAnalysesQueryKey() });
+        queryClient.invalidateQueries({ queryKey: getGetPortfolioSummaryQueryKey() });
+      }, 300);
     } catch {
       // Rollback on failure
       if (prevData !== undefined) {
@@ -104,6 +108,10 @@ export default function AnalyzeScreen() {
               if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
               commitDelete(pendingDelete.id, pendingDelete.prevData);
             }
+
+            // Cancel any in-flight refetch so it can't overwrite the
+            // optimistic removal during the 4-second undo window
+            queryClient.cancelQueries({ queryKey: getListAnalysesQueryKey() });
 
             // Optimistic removal from cache
             const prevData = queryClient.getQueryData<Analysis[]>(getListAnalysesQueryKey());

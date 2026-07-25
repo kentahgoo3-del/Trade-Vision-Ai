@@ -49,11 +49,15 @@ export default function JournalDetailScreen() {
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Delete', style: 'destructive', onPress: async () => {
-          await deleteEntry({ id: Number(id) });
-          queryClient.invalidateQueries({ queryKey: getListJournalEntriesQueryKey() });
-          queryClient.invalidateQueries({ queryKey: getGetJournalStatsQueryKey() });
-          queryClient.invalidateQueries({ queryKey: getGetPortfolioSummaryQueryKey() });
-          router.back();
+          try {
+            await deleteEntry({ id: Number(id) });
+            queryClient.invalidateQueries({ queryKey: getListJournalEntriesQueryKey() });
+            queryClient.invalidateQueries({ queryKey: getGetJournalStatsQueryKey() });
+            queryClient.invalidateQueries({ queryKey: getGetPortfolioSummaryQueryKey() });
+            router.back();
+          } catch {
+            Alert.alert('Error', 'Could not delete this entry. Please try again.');
+          }
         },
       },
     ]);
