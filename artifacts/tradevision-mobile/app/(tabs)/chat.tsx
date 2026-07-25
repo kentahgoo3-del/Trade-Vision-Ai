@@ -264,7 +264,7 @@ export default function ChatScreen() {
       />
 
       {/* Input */}
-      <View style={[styles.inputBar, { borderTopColor: colors.border, backgroundColor: colors.card, paddingBottom: Math.max(bottomPad, 16) + 16 }]}>
+      <View style={[styles.inputBar, { borderTopColor: colors.border, backgroundColor: colors.card, paddingBottom: Math.max(bottomPad, 16) + 52 }]}>
         <TextInput
           style={[styles.chatInput, { backgroundColor: colors.background, color: colors.foreground, borderColor: colors.primary + '60', height: inputHeight }]}
           value={input}
