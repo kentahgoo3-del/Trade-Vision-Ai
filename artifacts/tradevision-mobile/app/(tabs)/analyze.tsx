@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -24,6 +24,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { getListAnalysesQueryKey, getListRecentAnalysesQueryKey, getGetPortfolioSummaryQueryKey } from '@workspace/api-client-react';
 import type { Analysis } from '@workspace/api-client-react';
 
+const UNDO_DURATION_MS = 4000;
+
 const TIMEFRAMES = ['1m', '5m', '15m', '1H', '4H', '1D', '1W'];
 const SETUP_TYPES = ['Breakout', 'Reversal', 'Trend', 'Range', 'Scalp', 'Swing', 'News', 'Pattern'];
 
@@ -38,6 +40,13 @@ export default function AnalyzeScreen() {
   const [symbol, setSymbol] = useState('');
   const [timeframe, setTimeframe] = useState('1H');
   const [setupType, setSetupType] = useState('');
+
+  // Undo-delete state
+  const [pendingDelete, setPendingDelete] = useState<{
+    id: string;
+    prevData: Analysis[] | undefined;
+  } | null>(null);
+  const deleteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { data: analyses, isLoading: listLoading } = useListAnalyses();
   const { mutateAsync: createAnalysis, isPending } = useCreateAnalysis();
@@ -64,12 +73,8 @@ export default function AnalyzeScreen() {
 
   const topPad = Platform.OS === 'web' ? 67 : insets.top;
 
-  const handleDelete = async (id: string) => {
-    // Optimistic removal from cache
-    const prevData = queryClient.getQueryData<Analysis[]>(getListAnalysesQueryKey());
-    queryClient.setQueryData<Analysis[]>(getListAnalysesQueryKey(), (old) =>
-      old ? old.filter((a) => a.id !== id) : old
-    );
+  // Commit the pending delete to the API (called when toast auto-dismisses or a new delete comes in)
+  const commitDelete = React.useCallback(async (id: string, prevData: Analysis[] | undefined) => {
     try {
       await deleteAnalysis({ id: Number(id) });
       queryClient.invalidateQueries({ queryKey: getListAnalysesQueryKey() });
@@ -77,9 +82,41 @@ export default function AnalyzeScreen() {
       queryClient.invalidateQueries({ queryKey: getGetPortfolioSummaryQueryKey() });
     } catch {
       // Rollback on failure
-      queryClient.setQueryData(getListAnalysesQueryKey(), prevData);
+      if (prevData !== undefined) {
+        queryClient.setQueryData(getListAnalysesQueryKey(), prevData);
+      }
       Alert.alert('Error', 'Could not delete the analysis. Please try again.');
     }
+  }, [deleteAnalysis, queryClient]);
+
+  const handleDelete = (id: string) => {
+    // If there's already a pending delete, commit it immediately before starting a new one
+    if (pendingDelete) {
+      if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+      commitDelete(pendingDelete.id, pendingDelete.prevData);
+    }
+
+    // Optimistic removal from cache
+    const prevData = queryClient.getQueryData<Analysis[]>(getListAnalysesQueryKey());
+    queryClient.setQueryData<Analysis[]>(getListAnalysesQueryKey(), (old) =>
+      old ? old.filter((a) => a.id !== id) : old
+    );
+
+    setPendingDelete({ id, prevData });
+
+    // Auto-commit after UNDO_DURATION_MS
+    deleteTimerRef.current = setTimeout(() => {
+      setPendingDelete(null);
+      commitDelete(id, prevData);
+    }, UNDO_DURATION_MS);
+  };
+
+  const handleUndo = () => {
+    if (!pendingDelete) return;
+    if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+    // Restore the item in cache
+    queryClient.setQueryData(getListAnalysesQueryKey(), pendingDelete.prevData);
+    setPendingDelete(null);
   };
 
   const handleClearFailed = () => {
@@ -177,9 +214,12 @@ export default function AnalyzeScreen() {
     }
   };
 
+  const toastBottom = (Platform.OS === 'web' ? 34 : insets.bottom) + 80;
+
   return (
+    <View style={[styles.outerContainer, { backgroundColor: colors.background }]}>
     <ScrollView
-      style={[styles.scroll, { backgroundColor: colors.background }]}
+      style={styles.scroll}
       contentContainerStyle={[styles.content, { paddingTop: topPad + 16, paddingBottom: (Platform.OS === 'web' ? 34 : insets.bottom) + 100 }]}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
@@ -374,10 +414,34 @@ export default function AnalyzeScreen() {
         )}
       </View>
     </ScrollView>
+
+    {/* Undo toast */}
+    {pendingDelete && (
+      <View
+        style={[
+          styles.toast,
+          {
+            bottom: toastBottom,
+            backgroundColor: colors.foreground,
+          },
+        ]}
+        pointerEvents="box-none"
+      >
+        <Text style={[styles.toastText, { color: colors.background }]}>Analysis deleted</Text>
+        <Pressable
+          onPress={handleUndo}
+          style={({ pressed }) => [styles.undoBtn, { opacity: pressed ? 0.7 : 1 }]}
+        >
+          <Text style={[styles.undoBtnText, { color: colors.primary }]}>Undo</Text>
+        </Pressable>
+      </View>
+    )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  outerContainer: { flex: 1 },
   scroll: { flex: 1 },
   content: { paddingHorizontal: 16, gap: 16 },
   pageTitle: { fontSize: 28, fontFamily: 'Inter_700Bold' },
@@ -417,4 +481,23 @@ const styles = StyleSheet.create({
   clearFailedText: { fontSize: 12, fontFamily: 'Inter_600SemiBold' },
   checklistBtn: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12, borderWidth: 1, marginTop: 4 },
   checklistBtnText: { fontSize: 12, fontFamily: 'Inter_600SemiBold' },
+  toast: {
+    position: 'absolute',
+    left: 16,
+    right: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderRadius: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  toastText: { fontSize: 14, fontFamily: 'Inter_500Medium', flex: 1 },
+  undoBtn: { paddingHorizontal: 10, paddingVertical: 4 },
+  undoBtnText: { fontSize: 14, fontFamily: 'Inter_700Bold' },
 });
