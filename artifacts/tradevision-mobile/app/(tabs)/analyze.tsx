@@ -80,26 +80,39 @@ export default function AnalyzeScreen() {
     }
   };
 
-  const handleClearFailed = async () => {
+  const handleClearFailed = () => {
     const failedIds = (analyses ?? [])
       .filter((a) => a.status === 'error')
       .map((a) => a.id);
     if (failedIds.length === 0) return;
 
-    // Optimistic removal
-    const prevData = queryClient.getQueryData<Analysis[]>(getListAnalysesQueryKey());
-    queryClient.setQueryData<Analysis[]>(getListAnalysesQueryKey(), (old) =>
-      old ? old.filter((a) => !failedIds.includes(a.id)) : old
+    Alert.alert(
+      'Delete Failed Analyses',
+      `Delete ${failedIds.length} failed ${failedIds.length === 1 ? 'analysis' : 'analyses'}? This can't be undone.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            // Optimistic removal
+            const prevData = queryClient.getQueryData<Analysis[]>(getListAnalysesQueryKey());
+            queryClient.setQueryData<Analysis[]>(getListAnalysesQueryKey(), (old) =>
+              old ? old.filter((a) => !failedIds.includes(a.id)) : old
+            );
+            try {
+              await Promise.all(failedIds.map((id) => deleteAnalysis({ id: Number(id) })));
+              queryClient.invalidateQueries({ queryKey: getListAnalysesQueryKey() });
+              queryClient.invalidateQueries({ queryKey: getListRecentAnalysesQueryKey() });
+              queryClient.invalidateQueries({ queryKey: getGetPortfolioSummaryQueryKey() });
+            } catch {
+              queryClient.setQueryData(getListAnalysesQueryKey(), prevData);
+              Alert.alert('Error', 'Could not clear failed analyses. Please try again.');
+            }
+          },
+        },
+      ],
     );
-    try {
-      await Promise.all(failedIds.map((id) => deleteAnalysis({ id: Number(id) })));
-      queryClient.invalidateQueries({ queryKey: getListAnalysesQueryKey() });
-      queryClient.invalidateQueries({ queryKey: getListRecentAnalysesQueryKey() });
-      queryClient.invalidateQueries({ queryKey: getGetPortfolioSummaryQueryKey() });
-    } catch {
-      queryClient.setQueryData(getListAnalysesQueryKey(), prevData);
-      Alert.alert('Error', 'Could not clear failed analyses. Please try again.');
-    }
   };
 
   const failedCount = (analyses ?? []).filter((a) => a.status === 'error').length;
