@@ -259,26 +259,28 @@ export default function ChatScreen() {
       />
 
       {/* Input */}
-      <View style={[styles.inputBar, { borderTopColor: colors.border, backgroundColor: colors.background, paddingBottom: bottomPad + 8 }]}>
+      <View style={[styles.inputBar, { borderTopColor: colors.border, backgroundColor: colors.card, paddingBottom: Math.max(bottomPad, 8) + 8 }]}>
         <TextInput
-          style={[styles.chatInput, { backgroundColor: colors.input, color: colors.foreground, borderColor: colors.border }]}
+          style={[styles.chatInput, { backgroundColor: colors.background, color: colors.foreground, borderColor: colors.primary + '60' }]}
           value={input}
           onChangeText={setInput}
           placeholder="Ask about trading, charts, patterns…"
           placeholderTextColor={colors.mutedForeground}
           multiline
           maxLength={1000}
+          returnKeyType="send"
+          blurOnSubmit={false}
           onSubmitEditing={sendMessage}
         />
         <Pressable
           onPress={sendMessage}
           disabled={!input.trim() || streaming}
-          style={({ pressed }) => [styles.sendBtn, { backgroundColor: input.trim() && !streaming ? colors.primary : colors.muted, opacity: pressed ? 0.8 : 1 }]}
+          style={({ pressed }) => [styles.sendBtn, { backgroundColor: input.trim() && !streaming ? colors.primary : colors.border, opacity: pressed ? 0.8 : 1 }]}
         >
           {streaming ? (
             <ActivityIndicator size="small" color={colors.mutedForeground} />
           ) : (
-            <Ionicons name="arrow-up" size={20} color={input.trim() ? colors.primaryForeground : colors.mutedForeground} />
+            <Ionicons name="arrow-up" size={20} color={input.trim() && !streaming ? colors.primaryForeground : colors.mutedForeground} />
           )}
         </Pressable>
       </View>

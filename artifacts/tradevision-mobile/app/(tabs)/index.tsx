@@ -9,6 +9,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
@@ -23,10 +24,10 @@ import {
 
 // ── Market Sessions ────────────────────────────────────────────────────────────
 const SESSIONS = [
-  { name: 'Sydney',   openH: 21, closeH: 6,  flag: '🇦🇺', color: '#8B5CF6' },
-  { name: 'Tokyo',    openH: 0,  closeH: 9,  flag: '🇯🇵', color: '#F59E0B' },
-  { name: 'London',   openH: 7,  closeH: 16, flag: '🇬🇧', color: '#3B82F6' },
-  { name: 'New York', openH: 12, closeH: 21, flag: '🇺🇸', color: '#10B981' },
+  { name: 'Sydney',   code: 'SYD', openH: 21, closeH: 6,  color: '#8B5CF6' },
+  { name: 'Tokyo',    code: 'TYO', openH: 0,  closeH: 9,  color: '#F59E0B' },
+  { name: 'London',   code: 'LON', openH: 7,  closeH: 16, color: '#3B82F6' },
+  { name: 'New York', code: 'NYC', openH: 12, closeH: 21, color: '#10B981' },
 ] as const;
 
 function isSessionOpen(h: number, openH: number, closeH: number) {
@@ -81,7 +82,9 @@ function MarketSessionsWidget() {
               backgroundColor: open ? s.color + '20' : colors.secondary,
               borderColor: open ? s.color + '60' : colors.border,
             }]}>
-              <Text style={mwStyles.flag}>{s.flag}</Text>
+              <View style={[mwStyles.codeBadge, { backgroundColor: s.color + (open ? '30' : '18') }]}>
+                <Text style={[mwStyles.codeText, { color: open ? s.color : colors.mutedForeground }]}>{s.code}</Text>
+              </View>
               <Text style={[mwStyles.sessionName, { color: open ? s.color : colors.mutedForeground }]} numberOfLines={1}>
                 {s.name}
               </Text>
@@ -91,9 +94,12 @@ function MarketSessionsWidget() {
         })}
       </View>
       {nextSession && (
-        <Text style={[mwStyles.next, { color: colors.mutedForeground }]}>
-          {nextSession.flag} {nextSession.name} opens in {formatMins(nextSession.mins)}
-        </Text>
+        <View style={mwStyles.nextRow}>
+          <Ionicons name="time-outline" size={12} color={colors.mutedForeground} />
+          <Text style={[mwStyles.next, { color: colors.mutedForeground }]}>
+            {nextSession.name} opens in {formatMins(nextSession.mins)}
+          </Text>
+        </View>
       )}
       {openSessions.length === SESSIONS.length && (
         <Text style={[mwStyles.next, { color: colors.bullish }]}>All sessions active</Text>
@@ -109,10 +115,12 @@ const mwStyles = StyleSheet.create({
   utc: { fontSize: 11, fontFamily: 'Inter_500Medium' },
   sessions: { flexDirection: 'row', gap: 8, marginBottom: 8 },
   session: { flex: 1, borderRadius: 10, borderWidth: 1, padding: 8, alignItems: 'center', gap: 4 },
-  flag: { fontSize: 16 },
+  codeBadge: { borderRadius: 6, paddingHorizontal: 6, paddingVertical: 3 },
+  codeText: { fontSize: 10, fontFamily: 'Inter_700Bold', letterSpacing: 0.5 },
   sessionName: { fontSize: 9, fontFamily: 'Inter_600SemiBold', textAlign: 'center' },
   dot: { width: 6, height: 6, borderRadius: 3 },
-  next: { fontSize: 11, fontFamily: 'Inter_400Regular', textAlign: 'center' },
+  nextRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4 },
+  next: { fontSize: 11, fontFamily: 'Inter_400Regular' },
 });
 
 // ── Dashboard ──────────────────────────────────────────────────────────────────
@@ -206,9 +214,10 @@ export default function DashboardScreen() {
               {stats.currentWinStreak > 0 && (
                 <StatCard
                   label="Win Streak"
-                  value={`${stats.currentWinStreak}🔥`}
+                  value={`${stats.currentWinStreak}`}
                   sub="consecutive wins"
                   accent="gold"
+                  iconName="flame"
                 />
               )}
               {stats.avgScore !== null && stats.aiAccuracyRate === null && (

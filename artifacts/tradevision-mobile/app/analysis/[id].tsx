@@ -708,8 +708,8 @@ export default function AnalysisDetailScreen() {
             <View style={{ marginBottom: 10 }}>
               <Text style={{ fontSize: 11, fontFamily: 'Inter_700Bold', color: colors.bullish, marginBottom: 6, letterSpacing: 0.8 }}>SUPPORTING EVIDENCE</Text>
               {strengths.map((s, i) => (
-                <View key={i} style={{ flexDirection: 'row', gap: 8, paddingVertical: 3 }}>
-                  <Text style={{ color: colors.bullish }}>✓</Text>
+                <View key={i} style={{ flexDirection: 'row', gap: 8, paddingVertical: 3, alignItems: 'flex-start' }}>
+                  <Ionicons name="checkmark-circle" size={15} color={colors.bullish} style={{ marginTop: 1 }} />
                   <Text style={{ fontSize: 13, fontFamily: 'Inter_400Regular', color: colors.foreground, flex: 1 }}>{s}</Text>
                 </View>
               ))}
@@ -719,8 +719,8 @@ export default function AnalysisDetailScreen() {
             <View style={{ marginBottom: 10 }}>
               <Text style={{ fontSize: 11, fontFamily: 'Inter_700Bold', color: colors.gold, marginBottom: 6, letterSpacing: 0.8 }}>WEAKNESSES</Text>
               {weaknesses.map((w, i) => (
-                <View key={i} style={{ flexDirection: 'row', gap: 8, paddingVertical: 3 }}>
-                  <Text style={{ color: colors.gold }}>⚠</Text>
+                <View key={i} style={{ flexDirection: 'row', gap: 8, paddingVertical: 3, alignItems: 'flex-start' }}>
+                  <Ionicons name="warning" size={15} color={colors.gold} style={{ marginTop: 1 }} />
                   <Text style={{ fontSize: 13, fontFamily: 'Inter_400Regular', color: colors.foreground, flex: 1 }}>{w}</Text>
                 </View>
               ))}
@@ -730,8 +730,8 @@ export default function AnalysisDetailScreen() {
             <View>
               <Text style={{ fontSize: 11, fontFamily: 'Inter_700Bold', color: colors.bearish, marginBottom: 6, letterSpacing: 0.8 }}>RISK FACTORS</Text>
               {risks.map((r, i) => (
-                <View key={i} style={{ flexDirection: 'row', gap: 8, paddingVertical: 3 }}>
-                  <Text style={{ color: colors.bearish }}>✗</Text>
+                <View key={i} style={{ flexDirection: 'row', gap: 8, paddingVertical: 3, alignItems: 'flex-start' }}>
+                  <Ionicons name="close-circle" size={15} color={colors.bearish} style={{ marginTop: 1 }} />
                   <Text style={{ fontSize: 13, fontFamily: 'Inter_400Regular', color: colors.foreground, flex: 1 }}>{r}</Text>
                 </View>
               ))}
