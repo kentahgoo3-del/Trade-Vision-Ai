@@ -90,25 +90,38 @@ export default function AnalyzeScreen() {
   }, [deleteAnalysis, queryClient]);
 
   const handleDelete = (id: string) => {
-    // If there's already a pending delete, commit it immediately before starting a new one
-    if (pendingDelete) {
-      if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
-      commitDelete(pendingDelete.id, pendingDelete.prevData);
-    }
+    Alert.alert(
+      'Delete Analysis',
+      "Delete this analysis? This can't be undone.",
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            // If there's already a pending delete, commit it immediately before starting a new one
+            if (pendingDelete) {
+              if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+              commitDelete(pendingDelete.id, pendingDelete.prevData);
+            }
 
-    // Optimistic removal from cache
-    const prevData = queryClient.getQueryData<Analysis[]>(getListAnalysesQueryKey());
-    queryClient.setQueryData<Analysis[]>(getListAnalysesQueryKey(), (old) =>
-      old ? old.filter((a) => a.id !== id) : old
+            // Optimistic removal from cache
+            const prevData = queryClient.getQueryData<Analysis[]>(getListAnalysesQueryKey());
+            queryClient.setQueryData<Analysis[]>(getListAnalysesQueryKey(), (old) =>
+              old ? old.filter((a) => a.id !== id) : old
+            );
+
+            setPendingDelete({ id, prevData });
+
+            // Auto-commit after UNDO_DURATION_MS
+            deleteTimerRef.current = setTimeout(() => {
+              setPendingDelete(null);
+              commitDelete(id, prevData);
+            }, UNDO_DURATION_MS);
+          },
+        },
+      ],
     );
-
-    setPendingDelete({ id, prevData });
-
-    // Auto-commit after UNDO_DURATION_MS
-    deleteTimerRef.current = setTimeout(() => {
-      setPendingDelete(null);
-      commitDelete(id, prevData);
-    }, UNDO_DURATION_MS);
   };
 
   const handleUndo = () => {
