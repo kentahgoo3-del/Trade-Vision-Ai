@@ -11,15 +11,24 @@ router.get("/", async (_req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const { symbol, name, category, notes } = req.body as {
+  const { symbol, name, category, notes, targetPrice } = req.body as {
     symbol: string;
     name?: string;
     category: string;
     notes?: string;
+    targetPrice?: string;
   };
   if (!symbol || !category) { res.status(400).json({ error: "symbol and category required" }); return; }
-  const [created] = await db.insert(watchlistItems).values({ symbol: symbol.toUpperCase(), name, category, notes }).returning();
+  const [created] = await db.insert(watchlistItems).values({ symbol: symbol.toUpperCase(), name, category, notes, targetPrice }).returning();
   res.status(201).json(mapItem(created!));
+});
+
+router.patch("/:id", async (req, res) => {
+  const id = parseInt(req.params.id!);
+  const { targetPrice } = req.body as { targetPrice?: string };
+  const [updated] = await db.update(watchlistItems).set({ targetPrice: targetPrice ?? null }).where(eq(watchlistItems.id, id)).returning();
+  if (!updated) { res.status(404).json({ error: "Not found" }); return; }
+  res.json(mapItem(updated));
 });
 
 router.delete("/:id", async (req, res) => {
@@ -36,6 +45,7 @@ function mapItem(row: typeof watchlistItems.$inferSelect) {
     name: row.name,
     category: row.category,
     notes: row.notes,
+    targetPrice: row.targetPrice,
     addedAt: row.addedAt.toISOString(),
   };
 }

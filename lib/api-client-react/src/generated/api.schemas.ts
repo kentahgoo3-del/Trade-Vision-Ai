@@ -53,6 +53,18 @@ export type AnalysisPatternExplanationsItem = { [key: string]: unknown };
  */
 export type AnalysisNewsSentiment = { [key: string]: unknown } | null;
 
+/**
+ * @nullable
+ */
+export type AnalysisTradeOutcome = typeof AnalysisTradeOutcome[keyof typeof AnalysisTradeOutcome] | null;
+
+
+export const AnalysisTradeOutcome = {
+  won: 'won',
+  lost: 'lost',
+  skipped: 'skipped',
+} as const;
+
 export interface Analysis {
   id: number;
   /** @nullable */
@@ -132,6 +144,10 @@ export interface Analysis {
   beginnerExplanation?: string | null;
   /** @nullable */
   newsSentiment?: AnalysisNewsSentiment;
+  /** @nullable */
+  setupType?: string | null;
+  /** @nullable */
+  tradeOutcome?: AnalysisTradeOutcome;
   createdAt: string;
 }
 
@@ -139,12 +155,29 @@ export interface AnalysisInput {
   symbol?: string;
   timeframe?: string;
   imageBase64: string;
+  setupType?: string;
+}
+
+export type AnalysisUpdateTradeOutcome = typeof AnalysisUpdateTradeOutcome[keyof typeof AnalysisUpdateTradeOutcome];
+
+
+export const AnalysisUpdateTradeOutcome = {
+  won: 'won',
+  lost: 'lost',
+  skipped: 'skipped',
+} as const;
+
+export interface AnalysisUpdate {
+  tradeOutcome?: AnalysisUpdateTradeOutcome;
+  setupType?: string;
 }
 
 export type AnalysisStatsTopPatternsItem = {
   pattern: string;
   count: number;
 };
+
+export type AnalysisStatsSetupBreakdownItem = { [key: string]: unknown };
 
 export interface AnalysisStats {
   totalAnalyses: number;
@@ -153,6 +186,17 @@ export interface AnalysisStats {
   neutralCount: number;
   avgConfidence: number;
   topPatterns: AnalysisStatsTopPatternsItem[];
+  wonCount: number;
+  lostCount: number;
+  skippedCount: number;
+  /** @nullable */
+  aiAccuracyRate?: number | null;
+  /** @nullable */
+  avgScore?: number | null;
+  /** @nullable */
+  bestScore?: number | null;
+  currentWinStreak: number;
+  setupBreakdown: AnalysisStatsSetupBreakdownItem[];
 }
 
 export type WatchlistItemCategory = typeof WatchlistItemCategory[keyof typeof WatchlistItemCategory];
@@ -174,6 +218,8 @@ export interface WatchlistItem {
   category: WatchlistItemCategory;
   /** @nullable */
   notes?: string | null;
+  /** @nullable */
+  targetPrice?: string | null;
   addedAt: string;
 }
 
@@ -193,6 +239,11 @@ export interface WatchlistItemInput {
   name?: string;
   category: WatchlistItemInputCategory;
   notes?: string;
+  targetPrice?: string;
+}
+
+export interface WatchlistItemUpdate {
+  targetPrice?: string;
 }
 
 export type JournalEntryDirection = typeof JournalEntryDirection[keyof typeof JournalEntryDirection];

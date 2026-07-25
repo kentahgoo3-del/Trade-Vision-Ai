@@ -20,6 +20,7 @@ import {
   useListWatchlist,
   useAddWatchlistItem,
   useRemoveWatchlistItem,
+  useUpdateWatchlistItem,
   getListWatchlistQueryKey,
   getGetPortfolioSummaryQueryKey,
 } from '@workspace/api-client-react';
@@ -45,28 +46,54 @@ export default function WatchlistScreen() {
   const { data: items, isLoading } = useListWatchlist();
   const { mutateAsync: addItem } = useAddWatchlistItem();
   const { mutateAsync: removeItem } = useRemoveWatchlistItem();
+  const { mutateAsync: updateItem } = useUpdateWatchlistItem();
 
   const [showModal, setShowModal] = useState(false);
   const [newSymbol, setNewSymbol] = useState('');
   const [newName, setNewName] = useState('');
   const [newCategory, setNewCategory] = useState<Category>('crypto');
   const [newNotes, setNewNotes] = useState('');
+  const [newTargetPrice, setNewTargetPrice] = useState('');
   const [adding, setAdding] = useState(false);
+
+  // Inline target-price edit
+  const [editTargetId, setEditTargetId] = useState<number | null>(null);
+  const [editTargetValue, setEditTargetValue] = useState('');
 
   const handleAdd = async () => {
     if (!newSymbol.trim()) return;
     setAdding(true);
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     try {
-      await addItem({ data: { symbol: newSymbol.trim().toUpperCase(), name: newName.trim() || undefined, category: newCategory, notes: newNotes.trim() || undefined } });
+      await addItem({
+        data: {
+          symbol: newSymbol.trim().toUpperCase(),
+          name: newName.trim() || undefined,
+          category: newCategory,
+          notes: newNotes.trim() || undefined,
+          targetPrice: newTargetPrice.trim() || undefined,
+        },
+      });
       queryClient.invalidateQueries({ queryKey: getListWatchlistQueryKey() });
       queryClient.invalidateQueries({ queryKey: getGetPortfolioSummaryQueryKey() });
       setShowModal(false);
-      setNewSymbol(''); setNewName(''); setNewNotes('');
+      setNewSymbol(''); setNewName(''); setNewNotes(''); setNewTargetPrice('');
     } catch {
       Alert.alert('Error', 'Could not add item.');
     } finally {
       setAdding(false);
+    }
+  };
+
+  const handleSaveTarget = async (id: number) => {
+    try {
+      await updateItem({ id, data: { targetPrice: editTargetValue.trim() || undefined } });
+      queryClient.invalidateQueries({ queryKey: getListWatchlistQueryKey() });
+    } catch {
+      Alert.alert('Error', 'Could not update target price.');
+    } finally {
+      setEditTargetId(null);
+      setEditTargetValue('');
     }
   };
 
@@ -132,6 +159,42 @@ export default function WatchlistScreen() {
                     {item.name ? `${item.name} · ` : ''}{item.category}
                     {item.notes ? ` · ${item.notes}` : ''}
                   </Text>
+                  {/* Inline target price editor */}
+                  {editTargetId === item.id ? (
+                    <View style={styles.targetEditRow}>
+                      <TextInput
+                        style={[styles.targetInput, { backgroundColor: colors.input, color: colors.foreground, borderColor: colors.border }]}
+                        value={editTargetValue}
+                        onChangeText={setEditTargetValue}
+                        placeholder="e.g. 42000"
+                        placeholderTextColor={colors.mutedForeground}
+                        keyboardType="decimal-pad"
+                        autoFocus
+                        onSubmitEditing={() => handleSaveTarget(item.id)}
+                      />
+                      <Pressable onPress={() => handleSaveTarget(item.id)}
+                        style={[styles.targetSaveBtn, { backgroundColor: colors.primary }]}>
+                        <Ionicons name="checkmark" size={14} color={colors.primaryForeground} />
+                      </Pressable>
+                      <Pressable onPress={() => setEditTargetId(null)} hitSlop={8}>
+                        <Ionicons name="close" size={16} color={colors.mutedForeground} />
+                      </Pressable>
+                    </View>
+                  ) : (
+                    <Pressable
+                      onPress={() => { setEditTargetId(item.id); setEditTargetValue(item.targetPrice ?? ''); }}
+                      style={styles.targetBadgeTap}
+                    >
+                      {item.targetPrice ? (
+                        <View style={[styles.targetBadge, { backgroundColor: colors.gold + '20', borderColor: colors.gold + '50' }]}>
+                          <Ionicons name="flag-outline" size={11} color={colors.gold} />
+                          <Text style={[styles.targetText, { color: colors.gold }]}>Target: {item.targetPrice}</Text>
+                        </View>
+                      ) : (
+                        <Text style={[styles.targetEmpty, { color: colors.mutedForeground }]}>+ Set target price</Text>
+                      )}
+                    </Pressable>
+                  )}
                 </View>
                 <View style={[styles.catBadge, { backgroundColor: catColor + '20' }]}>
                   <Text style={[styles.catLabel, { color: catColor }]}>
@@ -195,6 +258,16 @@ export default function WatchlistScreen() {
               })}
             </ScrollView>
 
+            <Text style={[styles.fieldLabel, { color: colors.mutedForeground }]}>Target Price</Text>
+            <TextInput
+              style={[styles.fieldInput, { backgroundColor: colors.input, color: colors.foreground, borderColor: colors.border }]}
+              value={newTargetPrice}
+              onChangeText={setNewTargetPrice}
+              placeholder="e.g. 42000 (optional)"
+              placeholderTextColor={colors.mutedForeground}
+              keyboardType="decimal-pad"
+            />
+
             <Text style={[styles.fieldLabel, { color: colors.mutedForeground }]}>Notes</Text>
             <TextInput
               style={[styles.fieldInput, { backgroundColor: colors.input, color: colors.foreground, borderColor: colors.border }]}
@@ -228,7 +301,14 @@ const styles = StyleSheet.create({
   title: { fontSize: 28, fontFamily: 'Inter_700Bold' },
   count: { fontSize: 13, fontFamily: 'Inter_400Regular', marginTop: 2 },
   addBtn: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, borderWidth: 1, padding: 14, marginBottom: 10 },
+  row: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, borderRadius: 14, borderWidth: 1, padding: 14, marginBottom: 10 },
+  targetEditRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6 },
+  targetInput: { flex: 1, borderRadius: 8, borderWidth: 1, paddingHorizontal: 10, paddingVertical: 6, fontSize: 13, fontFamily: 'Inter_400Regular' },
+  targetSaveBtn: { width: 28, height: 28, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
+  targetBadgeTap: { marginTop: 4 },
+  targetBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, borderWidth: 1, alignSelf: 'flex-start' },
+  targetText: { fontSize: 11, fontFamily: 'Inter_600SemiBold' },
+  targetEmpty: { fontSize: 11, fontFamily: 'Inter_400Regular', fontStyle: 'italic' },
   catDot: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   catDotInner: { width: 10, height: 10, borderRadius: 5 },
   rowInfo: { flex: 1 },

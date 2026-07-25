@@ -25,6 +25,7 @@ import { getListAnalysesQueryKey, getListRecentAnalysesQueryKey, getGetPortfolio
 import type { Analysis } from '@workspace/api-client-react';
 
 const TIMEFRAMES = ['1m', '5m', '15m', '1H', '4H', '1D', '1W'];
+const SETUP_TYPES = ['Breakout', 'Reversal', 'Trend', 'Range', 'Scalp', 'Swing', 'News', 'Pattern'];
 
 export default function AnalyzeScreen() {
   const colors = useColors();
@@ -36,6 +37,7 @@ export default function AnalyzeScreen() {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [symbol, setSymbol] = useState('');
   const [timeframe, setTimeframe] = useState('1H');
+  const [setupType, setSetupType] = useState('');
 
   const { data: analyses, isLoading: listLoading } = useListAnalyses();
   const { mutateAsync: createAnalysis, isPending } = useCreateAnalysis();
@@ -155,7 +157,12 @@ export default function AnalyzeScreen() {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     try {
       const result = await createAnalysis({
-        data: { imageBase64, symbol: symbol.toUpperCase() || undefined, timeframe: timeframe || undefined },
+        data: {
+          imageBase64,
+          symbol: symbol.toUpperCase() || undefined,
+          timeframe: timeframe || undefined,
+          setupType: setupType || undefined,
+        },
       });
       queryClient.invalidateQueries({ queryKey: getListAnalysesQueryKey() });
       queryClient.invalidateQueries({ queryKey: getListRecentAnalysesQueryKey() });
@@ -163,6 +170,7 @@ export default function AnalyzeScreen() {
       setImageBase64(null);
       setImageUri(null);
       setSymbol('');
+      setSetupType('');
       router.push(`/analysis/${result.id}`);
     } catch (err) {
       Alert.alert('Error', 'Analysis failed. Please try again.');
@@ -176,10 +184,21 @@ export default function AnalyzeScreen() {
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
     >
-      <Text style={[styles.pageTitle, { color: colors.foreground }]}>Chart Analysis</Text>
-      <Text style={[styles.pageSubtitle, { color: colors.mutedForeground }]}>
-        Upload any trading chart for institutional-grade AI analysis
-      </Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.pageTitle, { color: colors.foreground }]}>Chart Analysis</Text>
+          <Text style={[styles.pageSubtitle, { color: colors.mutedForeground }]}>
+            Upload any trading chart for institutional-grade AI analysis
+          </Text>
+        </View>
+        <Pressable
+          onPress={() => router.push('/checklist')}
+          style={({ pressed }) => [styles.checklistBtn, { backgroundColor: colors.card, borderColor: colors.border, opacity: pressed ? 0.7 : 1 }]}
+        >
+          <Ionicons name="checkmark-done-outline" size={16} color={colors.primary} />
+          <Text style={[styles.checklistBtnText, { color: colors.primary }]}>Checklist</Text>
+        </Pressable>
+      </View>
 
       {/* Upload Area */}
       <View style={[styles.uploadCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -257,6 +276,32 @@ export default function AnalyzeScreen() {
               </Text>
             </Pressable>
           ))}
+        </ScrollView>
+      </View>
+
+      <View>
+        <Text style={[styles.inputLabel, { color: colors.mutedForeground }]}>Setup Type (optional)</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tfRow}>
+          {SETUP_TYPES.map((st) => {
+            const active = setupType === st;
+            return (
+              <Pressable
+                key={st}
+                onPress={() => setSetupType(active ? '' : st)}
+                style={[
+                  styles.tfChip,
+                  {
+                    backgroundColor: active ? colors.gold + '30' : colors.secondary,
+                    borderColor: active ? colors.gold : colors.border,
+                  },
+                ]}
+              >
+                <Text style={[styles.tfText, { color: active ? colors.gold : colors.foreground }]}>
+                  {st}
+                </Text>
+              </Pressable>
+            );
+          })}
         </ScrollView>
       </View>
 
@@ -370,4 +415,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   clearFailedText: { fontSize: 12, fontFamily: 'Inter_600SemiBold' },
+  checklistBtn: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12, borderWidth: 1, marginTop: 4 },
+  checklistBtnText: { fontSize: 12, fontFamily: 'Inter_600SemiBold' },
 });

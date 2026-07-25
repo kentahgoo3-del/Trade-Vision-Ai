@@ -19,10 +19,12 @@ import { useColors } from '@/hooks/useColors';
 import {
   useGetAnalysis,
   useDeleteAnalysis,
+  useUpdateAnalysis,
   getListAnalysesQueryKey,
   getListRecentAnalysesQueryKey,
   getGetPortfolioSummaryQueryKey,
   getGetAnalysisStatsQueryKey,
+  getGetAnalysisQueryKey,
 } from '@workspace/api-client-react';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -190,6 +192,43 @@ export default function AnalysisDetailScreen() {
 
   const { data: analysis, isLoading } = useGetAnalysis(Number(id));
   const { mutateAsync: deleteAnalysis } = useDeleteAnalysis();
+  const { mutateAsync: updateAnalysis, isPending: updatingOutcome } = useUpdateAnalysis();
+  const [outcomeLoading, setOutcomeLoading] = useState<string | null>(null);
+
+  const handleSetOutcome = async (outcome: 'won' | 'lost' | 'skipped') => {
+    const current = analysis?.tradeOutcome as string | null;
+    // Toggle off if same
+    const newOutcome = current === outcome ? '' : outcome;
+    setOutcomeLoading(outcome);
+    try {
+      await updateAnalysis({ id: Number(id), data: { tradeOutcome: newOutcome } });
+      queryClient.invalidateQueries({ queryKey: getGetAnalysisQueryKey(Number(id)) });
+      queryClient.invalidateQueries({ queryKey: getGetAnalysisStatsQueryKey() });
+    } finally {
+      setOutcomeLoading(null);
+    }
+  };
+
+  const handleLogTrade = () => {
+    if (!analysis) return;
+    const tradePlanParsed = parseJsonField<TradePlan>(analysis.tradePlan);
+    const direction = (analysis.tradeDirection ?? 'long') === 'short' ? 'short' : 'long';
+    const entryPrice = tradePlanParsed?.optimalEntry ?? analysis.entryPrice ?? '';
+    const stopLoss = tradePlanParsed?.stopLoss ?? analysis.stopLoss ?? '';
+    const takeProfit = tradePlanParsed?.takeProfit1 ?? analysis.takeProfit1 ?? '';
+    router.push({
+      pathname: '/journal/new',
+      params: {
+        symbol: analysis.symbol ?? '',
+        direction,
+        entryPrice: entryPrice.replace(/[^0-9.]/g, ''),
+        stopLoss: stopLoss.replace(/[^0-9.]/g, ''),
+        takeProfit: takeProfit.replace(/[^0-9.]/g, ''),
+        strategy: (analysis.setupType as string | null) ?? '',
+        analysisId: String(id),
+      },
+    });
+  };
 
   const overallScore = (analysis?.overallScore as number | null) ?? (analysis?.confidence as number | null) ?? 0;
 
@@ -307,6 +346,53 @@ export default function AnalysisDetailScreen() {
           <Text style={{ fontSize: 11, fontFamily: 'Inter_400Regular', color: colors.mutedForeground }}>/ 100 — {scoreLabel(overallScore)}</Text>
         </View>
       </View>
+
+      {/* ── Trade Outcome + Log Trade ── */}
+      <Card>
+        <SectionTitle title="Your Trade Outcome" icon="trophy" />
+        <View style={{ flexDirection: 'row', gap: 10, marginBottom: 14 }}>
+          {(['won', 'lost', 'skipped'] as const).map((o) => {
+            const active = (analysis.tradeOutcome as string | null) === o;
+            const col = o === 'won' ? colors.bullish : o === 'lost' ? colors.bearish : colors.gold;
+            const icon = o === 'won' ? 'checkmark-circle' : o === 'lost' ? 'close-circle' : 'remove-circle';
+            return (
+              <Pressable
+                key={o}
+                onPress={() => handleSetOutcome(o)}
+                disabled={!!outcomeLoading}
+                style={({ pressed }) => [{
+                  flex: 1, flexDirection: 'row' as const, alignItems: 'center' as const, justifyContent: 'center' as const,
+                  gap: 6, paddingVertical: 12, borderRadius: 12, borderWidth: 1.5,
+                  backgroundColor: active ? col + '20' : colors.secondary,
+                  borderColor: active ? col : colors.border,
+                  opacity: pressed ? 0.7 : 1,
+                }]}
+              >
+                {outcomeLoading === o
+                  ? <ActivityIndicator size="small" color={col} />
+                  : <Ionicons name={icon as any} size={16} color={active ? col : colors.mutedForeground} />
+                }
+                <Text style={{ fontSize: 13, fontFamily: 'Inter_600SemiBold', color: active ? col : colors.mutedForeground }}>
+                  {o.charAt(0).toUpperCase() + o.slice(1)}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+        <Pressable
+          onPress={handleLogTrade}
+          style={({ pressed }) => [{
+            flexDirection: 'row' as const, alignItems: 'center' as const, justifyContent: 'center' as const,
+            gap: 8, paddingVertical: 14, borderRadius: 14,
+            backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1,
+          }]}
+        >
+          <Ionicons name="journal-outline" size={18} color={colors.primaryForeground} />
+          <Text style={{ fontSize: 15, fontFamily: 'Inter_600SemiBold', color: colors.primaryForeground }}>
+            Log This Trade
+          </Text>
+        </Pressable>
+      </Card>
 
       {/* ── Trade Quality Stars ── */}
       {stars > 0 && (

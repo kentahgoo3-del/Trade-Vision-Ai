@@ -45,6 +45,9 @@ export const analyses = pgTable("analyses", {
   patternExplanations: jsonb("pattern_explanations"),
   beginnerExplanation: text("beginner_explanation"),
   newsSentiment: jsonb("news_sentiment"),
+  // User-added metadata
+  setupType: text("setup_type"),
+  tradeOutcome: text("trade_outcome"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 

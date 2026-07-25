@@ -161,7 +161,67 @@ router.get("/stats", async (_req, res) => {
     .slice(0, 5)
     .map(([pattern, count]) => ({ pattern, count }));
 
-  res.json({ totalAnalyses: rows.length, bullishCount: bullish, bearishCount: bearish, neutralCount: neutral, avgConfidence: Math.round(avgConfidence), topPatterns });
+  // Outcome tracking
+  const wonCount = rows.filter((r) => r.tradeOutcome === "won").length;
+  const lostCount = rows.filter((r) => r.tradeOutcome === "lost").length;
+  const skippedCount = rows.filter((r) => r.tradeOutcome === "skipped").length;
+  const aiAccuracyRate = (wonCount + lostCount) > 0
+    ? Math.round((wonCount / (wonCount + lostCount)) * 100)
+    : null;
+
+  // Score metrics
+  const scoredRows = rows.filter((r) => r.overallScore !== null && r.overallScore !== undefined);
+  const avgScore = scoredRows.length > 0
+    ? Math.round(scoredRows.reduce((sum, r) => sum + (r.overallScore ?? 0), 0) / scoredRows.length)
+    : null;
+  const bestScore = scoredRows.length > 0
+    ? Math.max(...scoredRows.map((r) => r.overallScore ?? 0))
+    : null;
+
+  // Setup type breakdown
+  const setupMap: Record<string, { count: number; scoreSum: number; scoreCount: number }> = {};
+  for (const row of rows) {
+    if (row.setupType) {
+      if (!setupMap[row.setupType]) setupMap[row.setupType] = { count: 0, scoreSum: 0, scoreCount: 0 };
+      setupMap[row.setupType]!.count++;
+      if (row.overallScore !== null && row.overallScore !== undefined) {
+        setupMap[row.setupType]!.scoreSum += row.overallScore;
+        setupMap[row.setupType]!.scoreCount++;
+      }
+    }
+  }
+  const setupBreakdown = Object.entries(setupMap).map(([setupType, { count, scoreSum, scoreCount }]) => ({
+    setupType,
+    count,
+    avgScore: scoreCount > 0 ? Math.round(scoreSum / scoreCount) : null,
+  }));
+
+  // Current win streak (analyses with outcomes, sorted most recent first)
+  const withOutcome = rows
+    .filter((r) => r.tradeOutcome === "won" || r.tradeOutcome === "lost")
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  let currentWinStreak = 0;
+  for (const r of withOutcome) {
+    if (r.tradeOutcome === "won") currentWinStreak++;
+    else break;
+  }
+
+  res.json({
+    totalAnalyses: rows.length,
+    bullishCount: bullish,
+    bearishCount: bearish,
+    neutralCount: neutral,
+    avgConfidence: Math.round(avgConfidence),
+    topPatterns,
+    wonCount,
+    lostCount,
+    skippedCount,
+    aiAccuracyRate,
+    avgScore,
+    bestScore,
+    setupBreakdown,
+    currentWinStreak,
+  });
 });
 
 router.get("/recent", async (_req, res) => {
@@ -176,12 +236,24 @@ router.get("/:id", async (req, res) => {
   res.json(mapAnalysis(row));
 });
 
+router.patch("/:id", async (req, res) => {
+  const id = parseInt(req.params.id!);
+  const { tradeOutcome, setupType } = req.body as { tradeOutcome?: string; setupType?: string };
+  const updates: Record<string, string | null> = {};
+  if (tradeOutcome !== undefined) updates.tradeOutcome = tradeOutcome || null;
+  if (setupType !== undefined) updates.setupType = setupType || null;
+  if (!Object.keys(updates).length) { res.status(400).json({ error: "Nothing to update" }); return; }
+  const [updated] = await db.update(analyses).set(updates).where(eq(analyses.id, id)).returning();
+  if (!updated) { res.status(404).json({ error: "Not found" }); return; }
+  res.json(mapAnalysis(updated));
+});
+
 router.post("/", async (req, res) => {
-  const { symbol, timeframe, imageBase64 } = req.body as { symbol?: string; timeframe?: string; imageBase64: string };
+  const { symbol, timeframe, imageBase64, setupType } = req.body as { symbol?: string; timeframe?: string; imageBase64: string; setupType?: string };
 
   if (!imageBase64) { res.status(400).json({ error: "imageBase64 is required" }); return; }
 
-  const [created] = await db.insert(analyses).values({ symbol, timeframe, imageBase64, status: "pending" }).returning();
+  const [created] = await db.insert(analyses).values({ symbol, timeframe, imageBase64, setupType, status: "pending" }).returning();
 
   try {
     const completion = await openai.chat.completions.create({
@@ -295,6 +367,8 @@ function mapAnalysis(row: typeof analyses.$inferSelect) {
     patternExplanations: row.patternExplanations,
     beginnerExplanation: row.beginnerExplanation,
     newsSentiment: row.newsSentiment,
+    setupType: row.setupType,
+    tradeOutcome: row.tradeOutcome,
     createdAt: row.createdAt.toISOString(),
   };
 }

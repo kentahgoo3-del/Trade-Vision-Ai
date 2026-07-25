@@ -5,6 +5,7 @@
  * TradeVision AI Pro API
  * OpenAPI spec version: 0.1.0
  */
+import type { AnalysisStatsSetupBreakdownItem } from './analysisStatsSetupBreakdownItem';
 import type { AnalysisStatsTopPatternsItem } from './analysisStatsTopPatternsItem';
 
 export interface AnalysisStats {
@@ -14,4 +15,15 @@ export interface AnalysisStats {
   neutralCount: number;
   avgConfidence: number;
   topPatterns: AnalysisStatsTopPatternsItem[];
+  wonCount: number;
+  lostCount: number;
+  skippedCount: number;
+  /** @nullable */
+  aiAccuracyRate?: number | null;
+  /** @nullable */
+  avgScore?: number | null;
+  /** @nullable */
+  bestScore?: number | null;
+  currentWinStreak: number;
+  setupBreakdown: AnalysisStatsSetupBreakdownItem[];
 }

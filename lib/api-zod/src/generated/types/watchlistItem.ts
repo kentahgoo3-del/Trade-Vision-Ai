@@ -15,5 +15,7 @@ export interface WatchlistItem {
   category: WatchlistItemCategory;
   /** @nullable */
   notes?: string | null;
+  /** @nullable */
+  targetPrice?: string | null;
   addedAt: Date;
 }

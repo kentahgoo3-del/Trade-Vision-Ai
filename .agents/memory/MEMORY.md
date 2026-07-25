@@ -1,1 +1,2 @@
 - [AI Decision Engine Schema](ai-decision-engine.md) — 14 new DB/API fields for full decision engine; analysis detail screen fully rebuilt with all sections.
+- [8-Feature Trader UX Expansion](trader-ux-expansion.md) — symbol tagging, setup types, trade outcomes, market sessions widget, log-trade shortcut, watchlist targets, pre-trade checklist, expanded dashboard stats.

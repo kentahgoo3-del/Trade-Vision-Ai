@@ -23,6 +23,7 @@ import type {
   Analysis,
   AnalysisInput,
   AnalysisStats,
+  AnalysisUpdate,
   ApiError,
   EquityPoint,
   HealthStatus,
@@ -38,7 +39,8 @@ import type {
   OpenaiMessageInput,
   PortfolioSummary,
   WatchlistItem,
-  WatchlistItemInput
+  WatchlistItemInput,
+  WatchlistItemUpdate
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
@@ -524,6 +526,78 @@ export function useGetAnalysis<TData = Awaited<ReturnType<typeof getAnalysis>>, 
 
 
 
+export const getUpdateAnalysisUrl = (id: number,) => {
+
+
+
+
+  return `/api/analyses/${id}`
+}
+
+/**
+ * @summary Update analysis metadata (trade outcome, setup type)
+ */
+export const updateAnalysis = async (id: number,
+    analysisUpdate: AnalysisUpdate, options?: RequestInit): Promise<Analysis> => {
+
+  return customFetch<Analysis>(getUpdateAnalysisUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(analysisUpdate)
+  }
+);}
+
+
+
+
+
+export const getUpdateAnalysisMutationOptions = <TError = ErrorType<ApiError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAnalysis>>, TError,{id: number;data: BodyType<AnalysisUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateAnalysis>>, TError,{id: number;data: BodyType<AnalysisUpdate>}, TContext> => {
+
+const mutationKey = ['updateAnalysis'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateAnalysis>>, {id: number;data: BodyType<AnalysisUpdate>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateAnalysis(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateAnalysisMutationResult = NonNullable<Awaited<ReturnType<typeof updateAnalysis>>>
+    export type UpdateAnalysisMutationBody = BodyType<AnalysisUpdate>
+    export type UpdateAnalysisMutationError = ErrorType<ApiError>
+
+    /**
+ * @summary Update analysis metadata (trade outcome, setup type)
+ */
+export const useUpdateAnalysis = <TError = ErrorType<ApiError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAnalysis>>, TError,{id: number;data: BodyType<AnalysisUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateAnalysis>>,
+        TError,
+        {id: number;data: BodyType<AnalysisUpdate>},
+        TContext
+      > => {
+      return useMutation(getUpdateAnalysisMutationOptions(options));
+    }
+
 export const getDeleteAnalysisUrl = (id: number,) => {
 
 
@@ -741,6 +815,78 @@ export const useAddWatchlistItem = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getAddWatchlistItemMutationOptions(options));
+    }
+
+export const getUpdateWatchlistItemUrl = (id: number,) => {
+
+
+
+
+  return `/api/watchlist/${id}`
+}
+
+/**
+ * @summary Update a watchlist item (e.g. set target price)
+ */
+export const updateWatchlistItem = async (id: number,
+    watchlistItemUpdate: WatchlistItemUpdate, options?: RequestInit): Promise<WatchlistItem> => {
+
+  return customFetch<WatchlistItem>(getUpdateWatchlistItemUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(watchlistItemUpdate)
+  }
+);}
+
+
+
+
+
+export const getUpdateWatchlistItemMutationOptions = <TError = ErrorType<ApiError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateWatchlistItem>>, TError,{id: number;data: BodyType<WatchlistItemUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateWatchlistItem>>, TError,{id: number;data: BodyType<WatchlistItemUpdate>}, TContext> => {
+
+const mutationKey = ['updateWatchlistItem'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateWatchlistItem>>, {id: number;data: BodyType<WatchlistItemUpdate>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateWatchlistItem(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateWatchlistItemMutationResult = NonNullable<Awaited<ReturnType<typeof updateWatchlistItem>>>
+    export type UpdateWatchlistItemMutationBody = BodyType<WatchlistItemUpdate>
+    export type UpdateWatchlistItemMutationError = ErrorType<ApiError>
+
+    /**
+ * @summary Update a watchlist item (e.g. set target price)
+ */
+export const useUpdateWatchlistItem = <TError = ErrorType<ApiError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateWatchlistItem>>, TError,{id: number;data: BodyType<WatchlistItemUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateWatchlistItem>>,
+        TError,
+        {id: number;data: BodyType<WatchlistItemUpdate>},
+        TContext
+      > => {
+      return useMutation(getUpdateWatchlistItemMutationOptions(options));
     }
 
 export const getRemoveWatchlistItemUrl = (id: number,) => {

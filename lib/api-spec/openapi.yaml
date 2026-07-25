@@ -120,6 +120,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiError"
+    patch:
+      operationId: updateAnalysis
+      tags: [analyses]
+      summary: Update analysis metadata (trade outcome, setup type)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalysisUpdate"
+      responses:
+        "200":
+          description: Updated analysis
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Analysis"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
     delete:
       operationId: deleteAnalysis
       tags: [analyses]
@@ -174,6 +203,35 @@ paths:
                 $ref: "#/components/schemas/WatchlistItem"
 
   /watchlist/{id}:
+    patch:
+      operationId: updateWatchlistItem
+      tags: [watchlist]
+      summary: Update a watchlist item (e.g. set target price)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WatchlistItemUpdate"
+      responses:
+        "200":
+          description: Updated item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WatchlistItem"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
     delete:
       operationId: removeWatchlistItem
       tags: [watchlist]
@@ -599,6 +657,11 @@ components:
         newsSentiment:
           type: ["object", "null"]
           additionalProperties: true
+        setupType:
+          type: ["string", "null"]
+        tradeOutcome:
+          type: ["string", "null"]
+          enum: [won, lost, skipped, null]
         createdAt:
           type: string
           format: date-time
@@ -616,8 +679,19 @@ components:
           type: string
         imageBase64:
           type: string
+        setupType:
+          type: string
       required:
         - imageBase64
+
+    AnalysisUpdate:
+      type: object
+      properties:
+        tradeOutcome:
+          type: string
+          enum: [won, lost, skipped]
+        setupType:
+          type: string
 
     AnalysisStats:
       type: object
@@ -644,6 +718,25 @@ components:
             required:
               - pattern
               - count
+        wonCount:
+          type: integer
+        lostCount:
+          type: integer
+        skippedCount:
+          type: integer
+        aiAccuracyRate:
+          type: ["number", "null"]
+        avgScore:
+          type: ["number", "null"]
+        bestScore:
+          type: ["number", "null"]
+        currentWinStreak:
+          type: integer
+        setupBreakdown:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
       required:
         - totalAnalyses
         - bullishCount
@@ -651,6 +744,11 @@ components:
         - neutralCount
         - avgConfidence
         - topPatterns
+        - wonCount
+        - lostCount
+        - skippedCount
+        - currentWinStreak
+        - setupBreakdown
 
     # ── Watchlist ─────────────────────────────────────────────────────────────
     WatchlistItem:
@@ -666,6 +764,8 @@ components:
           type: string
           enum: [crypto, forex, stocks, commodities, indices]
         notes:
+          type: ["string", "null"]
+        targetPrice:
           type: ["string", "null"]
         addedAt:
           type: string
@@ -688,9 +788,17 @@ components:
           enum: [crypto, forex, stocks, commodities, indices]
         notes:
           type: string
+        targetPrice:
+          type: string
       required:
         - symbol
         - category
+
+    WatchlistItemUpdate:
+      type: object
+      properties:
+        targetPrice:
+          type: string
 
     # ── Journal ───────────────────────────────────────────────────────────────
     JournalEntry:

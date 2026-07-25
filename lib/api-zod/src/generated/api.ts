@@ -60,6 +60,8 @@ export const ListAnalysesResponseItem = zod.object({
   "patternExplanations": zod.array(zod.record(zod.string(), zod.unknown())).nullish(),
   "beginnerExplanation": zod.string().nullish(),
   "newsSentiment": zod.record(zod.string(), zod.unknown()).nullish(),
+  "setupType": zod.string().nullish(),
+  "tradeOutcome": zod.union([zod.literal('won'),zod.literal('lost'),zod.literal('skipped'),zod.literal(null)]).nullish(),
   "createdAt": zod.coerce.date()
 })
 export const ListAnalysesResponse = zod.array(ListAnalysesResponseItem)
@@ -71,7 +73,8 @@ export const ListAnalysesResponse = zod.array(ListAnalysesResponseItem)
 export const CreateAnalysisBody = zod.object({
   "symbol": zod.string().optional(),
   "timeframe": zod.string().optional(),
-  "imageBase64": zod.string()
+  "imageBase64": zod.string(),
+  "setupType": zod.string().optional()
 })
 
 export const CreateAnalysisResponse = zod.object({
@@ -115,6 +118,8 @@ export const CreateAnalysisResponse = zod.object({
   "patternExplanations": zod.array(zod.record(zod.string(), zod.unknown())).nullish(),
   "beginnerExplanation": zod.string().nullish(),
   "newsSentiment": zod.record(zod.string(), zod.unknown()).nullish(),
+  "setupType": zod.string().nullish(),
+  "tradeOutcome": zod.union([zod.literal('won'),zod.literal('lost'),zod.literal('skipped'),zod.literal(null)]).nullish(),
   "createdAt": zod.coerce.date()
 })
 
@@ -131,7 +136,15 @@ export const GetAnalysisStatsResponse = zod.object({
   "topPatterns": zod.array(zod.object({
   "pattern": zod.string(),
   "count": zod.number()
-}))
+})),
+  "wonCount": zod.number(),
+  "lostCount": zod.number(),
+  "skippedCount": zod.number(),
+  "aiAccuracyRate": zod.number().nullish(),
+  "avgScore": zod.number().nullish(),
+  "bestScore": zod.number().nullish(),
+  "currentWinStreak": zod.number(),
+  "setupBreakdown": zod.array(zod.record(zod.string(), zod.unknown()))
 })
 
 
@@ -179,6 +192,8 @@ export const ListRecentAnalysesResponseItem = zod.object({
   "patternExplanations": zod.array(zod.record(zod.string(), zod.unknown())).nullish(),
   "beginnerExplanation": zod.string().nullish(),
   "newsSentiment": zod.record(zod.string(), zod.unknown()).nullish(),
+  "setupType": zod.string().nullish(),
+  "tradeOutcome": zod.union([zod.literal('won'),zod.literal('lost'),zod.literal('skipped'),zod.literal(null)]).nullish(),
   "createdAt": zod.coerce.date()
 })
 export const ListRecentAnalysesResponse = zod.array(ListRecentAnalysesResponseItem)
@@ -232,6 +247,67 @@ export const GetAnalysisResponse = zod.object({
   "patternExplanations": zod.array(zod.record(zod.string(), zod.unknown())).nullish(),
   "beginnerExplanation": zod.string().nullish(),
   "newsSentiment": zod.record(zod.string(), zod.unknown()).nullish(),
+  "setupType": zod.string().nullish(),
+  "tradeOutcome": zod.union([zod.literal('won'),zod.literal('lost'),zod.literal('skipped'),zod.literal(null)]).nullish(),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Update analysis metadata (trade outcome, setup type)
+ */
+export const UpdateAnalysisParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const UpdateAnalysisBody = zod.object({
+  "tradeOutcome": zod.enum(['won', 'lost', 'skipped']).optional(),
+  "setupType": zod.string().optional()
+})
+
+export const UpdateAnalysisResponse = zod.object({
+  "id": zod.number(),
+  "symbol": zod.string().nullish(),
+  "timeframe": zod.string().nullish(),
+  "chartType": zod.string().nullish(),
+  "imageBase64": zod.string().nullish(),
+  "status": zod.enum(['pending', 'complete', 'error']),
+  "trend": zod.string().nullish(),
+  "trendStrength": zod.number().nullish(),
+  "patterns": zod.string().nullish(),
+  "indicators": zod.string().nullish(),
+  "supportLevels": zod.string().nullish(),
+  "resistanceLevels": zod.string().nullish(),
+  "tradeDirection": zod.string().nullish(),
+  "entryPrice": zod.string().nullish(),
+  "stopLoss": zod.string().nullish(),
+  "takeProfit1": zod.string().nullish(),
+  "takeProfit2": zod.string().nullish(),
+  "takeProfit3": zod.string().nullish(),
+  "riskReward": zod.string().nullish(),
+  "confidence": zod.number().nullish(),
+  "confidenceLabel": zod.string().nullish(),
+  "explanation": zod.string().nullish(),
+  "strengths": zod.string().nullish(),
+  "weaknesses": zod.string().nullish(),
+  "risks": zod.string().nullish(),
+  "invalidationLevel": zod.string().nullish(),
+  "tradeDecision": zod.string().nullish(),
+  "overallScore": zod.number().nullish(),
+  "confidenceBreakdown": zod.record(zod.string(), zod.unknown()).nullish(),
+  "tradePlan": zod.record(zod.string(), zod.unknown()).nullish(),
+  "scenarios": zod.array(zod.record(zod.string(), zod.unknown())).nullish(),
+  "marketPsychology": zod.array(zod.string()).nullish(),
+  "tradeChecklist": zod.record(zod.string(), zod.unknown()).nullish(),
+  "multiTimeframe": zod.array(zod.record(zod.string(), zod.unknown())).nullish(),
+  "riskBreakdown": zod.record(zod.string(), zod.unknown()).nullish(),
+  "tradeQualityStars": zod.number().nullish(),
+  "coachAdvice": zod.array(zod.string()).nullish(),
+  "patternExplanations": zod.array(zod.record(zod.string(), zod.unknown())).nullish(),
+  "beginnerExplanation": zod.string().nullish(),
+  "newsSentiment": zod.record(zod.string(), zod.unknown()).nullish(),
+  "setupType": zod.string().nullish(),
+  "tradeOutcome": zod.union([zod.literal('won'),zod.literal('lost'),zod.literal('skipped'),zod.literal(null)]).nullish(),
   "createdAt": zod.coerce.date()
 })
 
@@ -255,6 +331,7 @@ export const ListWatchlistResponseItem = zod.object({
   "name": zod.string().nullish(),
   "category": zod.enum(['crypto', 'forex', 'stocks', 'commodities', 'indices']),
   "notes": zod.string().nullish(),
+  "targetPrice": zod.string().nullish(),
   "addedAt": zod.coerce.date()
 })
 export const ListWatchlistResponse = zod.array(ListWatchlistResponseItem)
@@ -267,7 +344,8 @@ export const AddWatchlistItemBody = zod.object({
   "symbol": zod.string(),
   "name": zod.string().optional(),
   "category": zod.enum(['crypto', 'forex', 'stocks', 'commodities', 'indices']),
-  "notes": zod.string().optional()
+  "notes": zod.string().optional(),
+  "targetPrice": zod.string().optional()
 })
 
 export const AddWatchlistItemResponse = zod.object({
@@ -276,6 +354,29 @@ export const AddWatchlistItemResponse = zod.object({
   "name": zod.string().nullish(),
   "category": zod.enum(['crypto', 'forex', 'stocks', 'commodities', 'indices']),
   "notes": zod.string().nullish(),
+  "targetPrice": zod.string().nullish(),
+  "addedAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Update a watchlist item (e.g. set target price)
+ */
+export const UpdateWatchlistItemParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const UpdateWatchlistItemBody = zod.object({
+  "targetPrice": zod.string().optional()
+})
+
+export const UpdateWatchlistItemResponse = zod.object({
+  "id": zod.number(),
+  "symbol": zod.string(),
+  "name": zod.string().nullish(),
+  "category": zod.enum(['crypto', 'forex', 'stocks', 'commodities', 'indices']),
+  "notes": zod.string().nullish(),
+  "targetPrice": zod.string().nullish(),
   "addedAt": zod.coerce.date()
 })
 

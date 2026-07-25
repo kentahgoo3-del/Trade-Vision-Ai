@@ -13,6 +13,7 @@ import type { AnalysisRiskBreakdown } from './analysisRiskBreakdown';
 import type { AnalysisScenariosItem } from './analysisScenariosItem';
 import type { AnalysisStatus } from './analysisStatus';
 import type { AnalysisTradeChecklist } from './analysisTradeChecklist';
+import type { AnalysisTradeOutcome } from './analysisTradeOutcome';
 import type { AnalysisTradePlan } from './analysisTradePlan';
 
 export interface Analysis {
@@ -94,5 +95,9 @@ export interface Analysis {
   beginnerExplanation?: string | null;
   /** @nullable */
   newsSentiment?: AnalysisNewsSentiment;
+  /** @nullable */
+  setupType?: string | null;
+  /** @nullable */
+  tradeOutcome?: AnalysisTradeOutcome;
   createdAt: Date;
 }

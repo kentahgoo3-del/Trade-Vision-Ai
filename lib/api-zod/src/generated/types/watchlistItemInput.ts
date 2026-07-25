@@ -12,4 +12,5 @@ export interface WatchlistItemInput {
   name?: string;
   category: WatchlistItemInputCategory;
   notes?: string;
+  targetPrice?: string;
 }

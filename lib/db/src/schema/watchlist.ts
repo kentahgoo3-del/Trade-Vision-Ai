@@ -8,6 +8,7 @@ export const watchlistItems = pgTable("watchlist_items", {
   name: text("name"),
   category: text("category").notNull().default("crypto"),
   notes: text("notes"),
+  targetPrice: text("target_price"),
   addedAt: timestamp("added_at", { withTimezone: true }).defaultNow().notNull(),
 });
 

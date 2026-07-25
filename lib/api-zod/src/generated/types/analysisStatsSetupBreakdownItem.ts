@@ -6,9 +6,4 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface AnalysisInput {
-  symbol?: string;
-  timeframe?: string;
-  imageBase64: string;
-  setupType?: string;
-}
+export type AnalysisStatsSetupBreakdownItem = { [key: string]: unknown };

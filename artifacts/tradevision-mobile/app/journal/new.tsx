@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useQueryClient } from '@tanstack/react-query';
 import { useColors } from '@/hooks/useColors';
@@ -42,20 +42,33 @@ export default function NewJournalScreen() {
   const queryClient = useQueryClient();
   const topPad = Platform.OS === 'web' ? 67 : insets.top;
 
+  // Pre-fill from analysis "Log This Trade" shortcut
+  const params = useLocalSearchParams<{
+    symbol?: string;
+    direction?: string;
+    entryPrice?: string;
+    stopLoss?: string;
+    takeProfit?: string;
+    strategy?: string;
+    analysisId?: string;
+  }>();
+
   const { mutateAsync: createEntry, isPending } = useCreateJournalEntry();
 
-  const [symbol, setSymbol] = useState('');
-  const [direction, setDirection] = useState<'long' | 'short'>('long');
-  const [entryPrice, setEntryPrice] = useState('');
+  const [symbol, setSymbol] = useState(params.symbol ?? '');
+  const [direction, setDirection] = useState<'long' | 'short'>(
+    params.direction === 'short' ? 'short' : 'long'
+  );
+  const [entryPrice, setEntryPrice] = useState(params.entryPrice ?? '');
   const [exitPrice, setExitPrice] = useState('');
-  const [stopLoss, setStopLoss] = useState('');
-  const [takeProfit, setTakeProfit] = useState('');
+  const [stopLoss, setStopLoss] = useState(params.stopLoss ?? '');
+  const [takeProfit, setTakeProfit] = useState(params.takeProfit ?? '');
   const [positionSize, setPositionSize] = useState('');
   const [pnl, setPnl] = useState('');
   const [riskReward, setRiskReward] = useState('');
   const [outcome, setOutcome] = useState<'' | 'win' | 'loss' | 'breakeven'>('');
-  const [strategy, setStrategy] = useState('');
-  const [notes, setNotes] = useState('');
+  const [strategy, setStrategy] = useState(params.strategy ?? '');
+  const [notes, setNotes] = useState(params.analysisId ? `From AI Analysis #${params.analysisId}` : '');
 
   const numericInput = (s: string) => s.replace(/[^0-9.-]/g, '');
 
