@@ -1,0 +1,886 @@
+Absolutely. Rather than cloning that app, I'd build something substantially more powerful with unique features that make it stand out. Below is a comprehensive Replit prompt for an enterprise-grade AI trading assistant.
+
+---
+
+# Replit AI Prompt
+
+## Project Name
+
+**TradeVision AI Pro**
+
+**Tagline:**
+*"Professional AI Chart Analysis, Pattern Recognition & Smart Trade Planning."*
+
+---
+
+# Overview
+
+Build a premium AI-powered web application that allows traders to upload any trading chart (Stocks, Forex, Crypto, Commodities, Indices, Futures, ETFs) and receive institutional-quality technical analysis within seconds.
+
+The application must look modern, premium, minimalistic and expensive, similar to Bloomberg Terminal mixed with Apple design aesthetics.
+
+DO NOT build a basic image classifier.
+
+Instead build an intelligent trading assistant capable of reasoning over charts.
+
+The application should feel like ChatGPT specifically built for traders.
+
+---
+
+# Main Features
+
+## 1. AI Chart Upload
+
+Users can
+
+* Upload screenshots
+* Drag & Drop images
+* Paste screenshots (Ctrl+V)
+* Take webcam photos
+* Capture phone camera images
+
+Supported formats
+
+* PNG
+* JPG
+* JPEG
+* WEBP
+
+Automatically enhance blurry images.
+
+Automatically rotate charts.
+
+Crop borders automatically.
+
+Increase contrast if needed.
+
+---
+
+# 2. AI Chart Understanding
+
+Use Computer Vision together with an LLM.
+
+The AI should identify
+
+Candlestick charts
+
+Bar charts
+
+Heikin Ashi
+
+Line charts
+
+Renko
+
+Point & Figure
+
+Volume profile
+
+Market profile
+
+Order flow screenshots
+
+TradingView screenshots
+
+MetaTrader
+
+ThinkorSwim
+
+NinjaTrader
+
+Interactive Brokers
+
+Binance
+
+Coinbase
+
+Robinhood
+
+Webull
+
+MT4
+
+MT5
+
+---
+
+# 3. Automatic Pattern Detection
+
+Detect
+
+Head & Shoulders
+
+Inverse Head & Shoulders
+
+Double Top
+
+Double Bottom
+
+Triple Top
+
+Triple Bottom
+
+Ascending Triangle
+
+Descending Triangle
+
+Symmetrical Triangle
+
+Bull Flag
+
+Bear Flag
+
+Pennant
+
+Cup and Handle
+
+Rounded Bottom
+
+Wedge
+
+Falling Wedge
+
+Rising Wedge
+
+Rectangle
+
+Channel
+
+Megaphone
+
+Diamond
+
+Broadening Formation
+
+Parabolic Move
+
+Consolidation
+
+Breakout
+
+Breakdown
+
+Trend Reversal
+
+Continuation Patterns
+
+Wyckoff Accumulation
+
+Wyckoff Distribution
+
+Elliott Wave (basic)
+
+Harmonic Patterns
+
+ABCD
+
+Bat
+
+Butterfly
+
+Crab
+
+Shark
+
+Cypher
+
+Gartley
+
+---
+
+# 4. Trend Analysis
+
+Determine
+
+Strong Bullish
+
+Bullish
+
+Neutral
+
+Bearish
+
+Strong Bearish
+
+Calculate
+
+Trend Strength
+
+Momentum
+
+Slope
+
+Moving Average Direction
+
+EMA Alignment
+
+MACD Bias
+
+RSI Bias
+
+ADX Trend Strength
+
+---
+
+# 5. Support & Resistance Detection
+
+Automatically draw
+
+Support Zones
+
+Resistance Zones
+
+Supply Zones
+
+Demand Zones
+
+Pivot Points
+
+Dynamic Support
+
+Dynamic Resistance
+
+Trendlines
+
+Channels
+
+Breakout Zones
+
+Liquidity Areas
+
+---
+
+# 6. Indicator Recognition
+
+If indicators appear on screenshots identify
+
+RSI
+
+MACD
+
+VWAP
+
+Bollinger Bands
+
+EMA
+
+SMA
+
+Ichimoku Cloud
+
+ATR
+
+ADX
+
+OBV
+
+Stochastic
+
+CCI
+
+SuperTrend
+
+Parabolic SAR
+
+Volume
+
+Fibonacci
+
+---
+
+# 7. Fibonacci Analysis
+
+Automatically detect
+
+Swing High
+
+Swing Low
+
+Fib Levels
+
+23.6%
+
+38.2%
+
+50%
+
+61.8%
+
+78.6%
+
+Extension Levels
+
+---
+
+# 8. Volume Analysis
+
+Recognize
+
+High Volume Breakouts
+
+Volume Dry-up
+
+Buying Climax
+
+Selling Climax
+
+Volume Divergence
+
+---
+
+# 9. Smart Trading Strategy
+
+Generate
+
+Trade Direction
+
+LONG
+
+SHORT
+
+WAIT
+
+Probability Score
+
+Example
+
+Long Probability
+
+87%
+
+Confidence
+
+High
+
+Risk
+
+Medium
+
+---
+
+Generate
+
+Entry Price
+
+Entry Zone
+
+Stop Loss
+
+Take Profit 1
+
+Take Profit 2
+
+Take Profit 3
+
+Risk Reward Ratio
+
+Expected Move
+
+Trade Duration
+
+Scalp
+
+Day Trade
+
+Swing
+
+Position Trade
+
+---
+
+# 10. AI Explanation
+
+Explain
+
+Why this trade?
+
+Why not?
+
+Strengths
+
+Weaknesses
+
+Risks
+
+Invalidation Level
+
+Market Psychology
+
+Institutional Activity
+
+Retail Sentiment
+
+---
+
+# 11. News Integration
+
+Fetch latest financial news
+
+OpenAI
+
+NewsAPI
+
+Finnhub
+
+AlphaVantage
+
+Polygon
+
+Yahoo Finance
+
+Display
+
+Latest headlines
+
+Bullish News
+
+Bearish News
+
+Market Impact
+
+Sentiment Score
+
+AI Summary
+
+---
+
+# 12. Economic Calendar
+
+Display
+
+Interest Rate Decisions
+
+NFP
+
+CPI
+
+PPI
+
+GDP
+
+FOMC
+
+ECB
+
+BoE
+
+BoJ
+
+RBA
+
+Employment
+
+High Impact Events
+
+Countdown Timer
+
+---
+
+# 13. AI Confidence Meter
+
+Large animated gauge
+
+0-100%
+
+Green
+
+Yellow
+
+Red
+
+Explain confidence calculation
+
+---
+
+# 14. Risk Calculator
+
+Inputs
+
+Account Balance
+
+Risk %
+
+Entry
+
+Stop Loss
+
+Automatically calculate
+
+Position Size
+
+Dollar Risk
+
+Lot Size
+
+Maximum Loss
+
+---
+
+# 15. AI Watchlist
+
+Save assets
+
+Track
+
+BTC
+
+ETH
+
+EURUSD
+
+XAUUSD
+
+SPY
+
+QQQ
+
+TSLA
+
+NVDA
+
+AAPL
+
+MSFT
+
+---
+
+# 16. Trade Journal
+
+Store
+
+Charts
+
+Analysis
+
+Outcome
+
+Profit
+
+Loss
+
+Win Rate
+
+Statistics
+
+---
+
+# 17. AI Learning Mode
+
+Explain
+
+Every detected pattern
+
+How it works
+
+Historical accuracy
+
+Common mistakes
+
+Videos
+
+Charts
+
+Examples
+
+---
+
+# 18. Portfolio Dashboard
+
+Display
+
+Total Trades
+
+Win Rate
+
+Average RR
+
+Total Profit
+
+Sharpe Ratio
+
+Monthly Performance
+
+Equity Curve
+
+Heat Map
+
+---
+
+# 19. AI Chat Assistant
+
+ChatGPT-like interface
+
+Ask
+
+"What do you think about BTC?"
+
+"Explain RSI."
+
+"Why is this bearish?"
+
+"Improve my strategy."
+
+---
+
+# 20. Multi-Timeframe Analysis
+
+Automatically compare
+
+1 Minute
+
+5 Minute
+
+15 Minute
+
+30 Minute
+
+1 Hour
+
+4 Hour
+
+Daily
+
+Weekly
+
+Monthly
+
+Highlight conflicts.
+
+---
+
+# Premium UI Design
+
+Use
+
+React
+
+Next.js
+
+TailwindCSS
+
+shadcn/ui
+
+Framer Motion
+
+Lucide Icons
+
+Glassmorphism
+
+Dark Theme
+
+Rounded Cards
+
+Soft Shadows
+
+Animated Charts
+
+Gradient Backgrounds
+
+Responsive Layout
+
+Professional typography.
+
+---
+
+# Dashboard Layout
+
+Sidebar
+
+Home
+
+Analyze Chart
+
+Watchlist
+
+Portfolio
+
+Journal
+
+Market News
+
+Economic Calendar
+
+Settings
+
+AI Assistant
+
+Main Panel
+
+Large upload zone
+
+Live preview
+
+AI analysis
+
+Trade recommendation
+
+Pattern cards
+
+Risk metrics
+
+Confidence meter
+
+---
+
+# Backend
+
+Node.js
+
+Express
+
+Supabase
+
+PostgreSQL
+
+Authentication
+
+JWT
+
+Cloud Storage
+
+Redis Cache
+
+---
+
+# AI Stack
+
+OpenAI GPT-5.5
+
+Vision Model
+
+Financial reasoning
+
+Pattern recognition
+
+OCR
+
+Image preprocessing
+
+Prompt engineering
+
+Streaming responses
+
+---
+
+# Security
+
+User Authentication
+
+Email Verification
+
+Google Login
+
+Apple Login
+
+Encrypted Storage
+
+Rate Limiting
+
+Premium API Keys
+
+Audit Logs
+
+---
+
+# Subscription System
+
+Free
+
+3 analyses/day
+
+Pro
+
+Unlimited
+
+Priority AI
+
+Portfolio
+
+Journal
+
+News
+
+Advanced Indicators
+
+Enterprise
+
+Team accounts
+
+API Access
+
+White Label
+
+---
+
+# Landing Page
+
+Hero section
+
+Animated trading charts
+
+Moving candlesticks
+
+Feature cards
+
+Testimonials
+
+Pricing
+
+FAQ
+
+Screenshots
+
+Download buttons
+
+Professional footer
+
+---
+
+# Mobile App Ready
+
+Responsive
+
+PWA
+
+Offline Mode
+
+Push Notifications
+
+Native-style animations
+
+---
+
+# Performance
+
+Lazy Loading
+
+Image Compression
+
+Streaming AI
+
+Background Processing
+
+Skeleton Loaders
+
+Caching
+
+---
+
+# Nice-to-Have Features
+
+* Voice-powered AI assistant.
+* Live market data integration.
+* Broker API connectivity (paper trading first).
+* Backtesting engine for AI-generated strategies.
+* Strategy comparison across multiple uploaded charts.
+* Custom indicator creation using natural language.
+* Alert system for detected chart patterns.
+* Multi-language support.
+* PDF export of analysis reports.
+* Community chart sharing (optional).
+
+---
+
+# Overall Goal
+
+Create a polished, production-ready AI trading platform that feels like a fusion of **TradingView, Bloomberg Terminal, ChatGPT, TrendSpider, and LuxAlgo**—while remaining original in branding, user experience, and implementation. The application should deliver fast, explainable, AI-powered chart analysis with a clean, premium interface, scalable architecture, secure authentication, and an excellent experience on desktop and mobile.

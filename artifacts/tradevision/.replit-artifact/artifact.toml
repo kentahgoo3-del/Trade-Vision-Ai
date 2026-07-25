@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "TradeVision AI Pro"
+version = "1.0.0"
+id = "artifacts/tradevision"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18792
+
+[services.development]
+run = "pnpm --filter @workspace/tradevision run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/tradevision", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/tradevision/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18792"
+BASE_PATH = "/"

@@ -3,20 +3,30 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: TradeVision AI Pro API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: analyses
+    description: AI chart analysis operations
+  - name: watchlist
+    description: Watchlist operations
+  - name: journal
+    description: Trade journal operations
+  - name: portfolio
+    description: Portfolio statistics
+  - name: openai
+    description: OpenAI AI chat operations
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +34,448 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # ── Chart Analyses ──────────────────────────────────────────────────────────
+  /analyses:
+    get:
+      operationId: listAnalyses
+      tags: [analyses]
+      summary: List all chart analyses
+      responses:
+        "200":
+          description: List of analyses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Analysis"
+    post:
+      operationId: createAnalysis
+      tags: [analyses]
+      summary: Upload a chart image and trigger AI analysis
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalysisInput"
+      responses:
+        "201":
+          description: Analysis created (may be pending while AI processes)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Analysis"
+
+  /analyses/stats:
+    get:
+      operationId: getAnalysisStats
+      tags: [analyses]
+      summary: Get aggregate stats across all analyses (win rate, pattern freq, etc.)
+      responses:
+        "200":
+          description: Analysis statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisStats"
+
+  /analyses/recent:
+    get:
+      operationId: listRecentAnalyses
+      tags: [analyses]
+      summary: Get the 5 most recent analyses with full AI results
+      responses:
+        "200":
+          description: Recent analyses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Analysis"
+
+  /analyses/{id}:
+    get:
+      operationId: getAnalysis
+      tags: [analyses]
+      summary: Get a single analysis by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Analysis detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Analysis"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+    delete:
+      operationId: deleteAnalysis
+      tags: [analyses]
+      summary: Delete an analysis
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+
+  # ── Watchlist ────────────────────────────────────────────────────────────────
+  /watchlist:
+    get:
+      operationId: listWatchlist
+      tags: [watchlist]
+      summary: Get all watchlist items
+      responses:
+        "200":
+          description: Watchlist items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WatchlistItem"
+    post:
+      operationId: addWatchlistItem
+      tags: [watchlist]
+      summary: Add a symbol to the watchlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WatchlistItemInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WatchlistItem"
+
+  /watchlist/{id}:
+    delete:
+      operationId: removeWatchlistItem
+      tags: [watchlist]
+      summary: Remove a symbol from the watchlist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Removed
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+
+  # ── Trade Journal ────────────────────────────────────────────────────────────
+  /journal:
+    get:
+      operationId: listJournalEntries
+      tags: [journal]
+      summary: List all trade journal entries
+      responses:
+        "200":
+          description: Journal entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/JournalEntry"
+    post:
+      operationId: createJournalEntry
+      tags: [journal]
+      summary: Create a trade journal entry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JournalEntryInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JournalEntry"
+
+  /journal/stats:
+    get:
+      operationId: getJournalStats
+      tags: [journal]
+      summary: Aggregate performance stats from journal entries (win rate, avg RR, equity curve, etc.)
+      responses:
+        "200":
+          description: Journal performance statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JournalStats"
+
+  /journal/{id}:
+    get:
+      operationId: getJournalEntry
+      tags: [journal]
+      summary: Get a single journal entry
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Journal entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JournalEntry"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+    patch:
+      operationId: updateJournalEntry
+      tags: [journal]
+      summary: Update a journal entry (e.g. record outcome)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JournalEntryUpdate"
+      responses:
+        "200":
+          description: Updated entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JournalEntry"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+    delete:
+      operationId: deleteJournalEntry
+      tags: [journal]
+      summary: Delete a journal entry
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+
+  # ── Portfolio Dashboard ──────────────────────────────────────────────────────
+  /portfolio/summary:
+    get:
+      operationId: getPortfolioSummary
+      tags: [portfolio]
+      summary: Get overall portfolio performance summary
+      responses:
+        "200":
+          description: Portfolio summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PortfolioSummary"
+
+  /portfolio/equity-curve:
+    get:
+      operationId: getEquityCurve
+      tags: [portfolio]
+      summary: Get the equity curve data points over time
+      responses:
+        "200":
+          description: Equity curve data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EquityPoint"
+
+  /portfolio/monthly-performance:
+    get:
+      operationId: getMonthlyPerformance
+      tags: [portfolio]
+      summary: Get monthly P&L breakdown
+      responses:
+        "200":
+          description: Monthly performance
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MonthlyPerformance"
+
+  # ── OpenAI Chat ─────────────────────────────────────────────────────────────
+  /openai/conversations:
+    get:
+      operationId: listOpenaiConversations
+      tags: [openai]
+      summary: List all conversations
+      responses:
+        "200":
+          description: List of conversations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OpenaiConversation"
+    post:
+      operationId: createOpenaiConversation
+      tags: [openai]
+      summary: Create a new conversation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OpenaiConversationInput"
+      responses:
+        "201":
+          description: Created conversation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenaiConversation"
+
+  /openai/conversations/{id}:
+    get:
+      operationId: getOpenaiConversation
+      tags: [openai]
+      summary: Get conversation with messages
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Conversation with messages
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenaiConversationWithMessages"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+    delete:
+      operationId: deleteOpenaiConversation
+      tags: [openai]
+      summary: Delete a conversation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+
+  /openai/conversations/{id}/messages:
+    get:
+      operationId: listOpenaiMessages
+      tags: [openai]
+      summary: List messages in a conversation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OpenaiMessage"
+    post:
+      operationId: sendOpenaiMessage
+      tags: [openai]
+      summary: Send a text message and receive a streaming response
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OpenaiMessageInput"
+      responses:
+        "200":
+          description: SSE stream of assistant text chunks
+          content:
+            text/event-stream: {}
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +486,444 @@ components:
       required:
         - status
 
+    ApiError:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    # ── Analysis ──────────────────────────────────────────────────────────────
+    Analysis:
+      type: object
+      properties:
+        id:
+          type: integer
+        symbol:
+          type: ["string", "null"]
+        timeframe:
+          type: ["string", "null"]
+        chartType:
+          type: ["string", "null"]
+        imageBase64:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [pending, complete, error]
+        # AI result fields
+        trend:
+          type: ["string", "null"]
+        trendStrength:
+          type: ["number", "null"]
+        patterns:
+          type: ["string", "null"]
+        indicators:
+          type: ["string", "null"]
+        supportLevels:
+          type: ["string", "null"]
+        resistanceLevels:
+          type: ["string", "null"]
+        tradeDirection:
+          type: ["string", "null"]
+        entryPrice:
+          type: ["string", "null"]
+        stopLoss:
+          type: ["string", "null"]
+        takeProfit1:
+          type: ["string", "null"]
+        takeProfit2:
+          type: ["string", "null"]
+        takeProfit3:
+          type: ["string", "null"]
+        riskReward:
+          type: ["string", "null"]
+        confidence:
+          type: ["number", "null"]
+        confidenceLabel:
+          type: ["string", "null"]
+        explanation:
+          type: ["string", "null"]
+        strengths:
+          type: ["string", "null"]
+        weaknesses:
+          type: ["string", "null"]
+        risks:
+          type: ["string", "null"]
+        invalidationLevel:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - status
+        - createdAt
+
+    AnalysisInput:
+      type: object
+      properties:
+        symbol:
+          type: string
+        timeframe:
+          type: string
+        imageBase64:
+          type: string
+      required:
+        - imageBase64
+
+    AnalysisStats:
+      type: object
+      properties:
+        totalAnalyses:
+          type: integer
+        bullishCount:
+          type: integer
+        bearishCount:
+          type: integer
+        neutralCount:
+          type: integer
+        avgConfidence:
+          type: number
+        topPatterns:
+          type: array
+          items:
+            type: object
+            properties:
+              pattern:
+                type: string
+              count:
+                type: integer
+            required:
+              - pattern
+              - count
+      required:
+        - totalAnalyses
+        - bullishCount
+        - bearishCount
+        - neutralCount
+        - avgConfidence
+        - topPatterns
+
+    # ── Watchlist ─────────────────────────────────────────────────────────────
+    WatchlistItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        symbol:
+          type: string
+        name:
+          type: ["string", "null"]
+        category:
+          type: string
+          enum: [crypto, forex, stocks, commodities, indices]
+        notes:
+          type: ["string", "null"]
+        addedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - symbol
+        - category
+        - addedAt
+
+    WatchlistItemInput:
+      type: object
+      properties:
+        symbol:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+          enum: [crypto, forex, stocks, commodities, indices]
+        notes:
+          type: string
+      required:
+        - symbol
+        - category
+
+    # ── Journal ───────────────────────────────────────────────────────────────
+    JournalEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        symbol:
+          type: string
+        direction:
+          type: string
+          enum: [long, short]
+        entryPrice:
+          type: number
+        exitPrice:
+          type: ["number", "null"]
+        stopLoss:
+          type: ["number", "null"]
+        takeProfit:
+          type: ["number", "null"]
+        positionSize:
+          type: ["number", "null"]
+        pnl:
+          type: ["number", "null"]
+        riskReward:
+          type: ["number", "null"]
+        outcome:
+          type: ["string", "null"]
+          enum: [win, loss, breakeven, null]
+        strategy:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        chartImageBase64:
+          type: ["string", "null"]
+        analysisId:
+          type: ["integer", "null"]
+        tradeDate:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - symbol
+        - direction
+        - entryPrice
+        - tradeDate
+        - createdAt
+
+    JournalEntryInput:
+      type: object
+      properties:
+        symbol:
+          type: string
+        direction:
+          type: string
+          enum: [long, short]
+        entryPrice:
+          type: number
+        exitPrice:
+          type: number
+        stopLoss:
+          type: number
+        takeProfit:
+          type: number
+        positionSize:
+          type: number
+        pnl:
+          type: number
+        riskReward:
+          type: number
+        outcome:
+          type: string
+          enum: [win, loss, breakeven]
+        strategy:
+          type: string
+        notes:
+          type: string
+        chartImageBase64:
+          type: string
+        analysisId:
+          type: integer
+        tradeDate:
+          type: string
+          format: date-time
+      required:
+        - symbol
+        - direction
+        - entryPrice
+
+    JournalEntryUpdate:
+      type: object
+      properties:
+        exitPrice:
+          type: number
+        stopLoss:
+          type: number
+        takeProfit:
+          type: number
+        positionSize:
+          type: number
+        pnl:
+          type: number
+        riskReward:
+          type: number
+        outcome:
+          type: string
+          enum: [win, loss, breakeven]
+        strategy:
+          type: string
+        notes:
+          type: string
+
+    JournalStats:
+      type: object
+      properties:
+        totalTrades:
+          type: integer
+        winCount:
+          type: integer
+        lossCount:
+          type: integer
+        breakevenCount:
+          type: integer
+        winRate:
+          type: number
+        avgRiskReward:
+          type: number
+        totalPnl:
+          type: number
+        bestTrade:
+          type: ["number", "null"]
+        worstTrade:
+          type: ["number", "null"]
+        avgPnl:
+          type: number
+        sharpeRatio:
+          type: ["number", "null"]
+      required:
+        - totalTrades
+        - winCount
+        - lossCount
+        - breakevenCount
+        - winRate
+        - avgRiskReward
+        - totalPnl
+        - bestTrade
+        - worstTrade
+        - avgPnl
+        - sharpeRatio
+
+    # ── Portfolio ─────────────────────────────────────────────────────────────
+    PortfolioSummary:
+      type: object
+      properties:
+        totalTrades:
+          type: integer
+        winRate:
+          type: number
+        totalPnl:
+          type: number
+        avgRiskReward:
+          type: number
+        sharpeRatio:
+          type: ["number", "null"]
+        totalAnalyses:
+          type: integer
+        watchlistCount:
+          type: integer
+      required:
+        - totalTrades
+        - winRate
+        - totalPnl
+        - avgRiskReward
+        - sharpeRatio
+        - totalAnalyses
+        - watchlistCount
+
+    EquityPoint:
+      type: object
+      properties:
+        date:
+          type: string
+        equity:
+          type: number
+        pnl:
+          type: number
+      required:
+        - date
+        - equity
+        - pnl
+
+    MonthlyPerformance:
+      type: object
+      properties:
+        month:
+          type: string
+        pnl:
+          type: number
+        trades:
+          type: integer
+        winRate:
+          type: number
+      required:
+        - month
+        - pnl
+        - trades
+        - winRate
+
+    # ── OpenAI Chat ───────────────────────────────────────────────────────────
+    OpenaiConversation:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - title
+        - createdAt
+
+    OpenaiMessage:
+      type: object
+      properties:
+        id:
+          type: integer
+        conversationId:
+          type: integer
+        role:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - conversationId
+        - role
+        - content
+        - createdAt
+
+    OpenaiConversationInput:
+      type: object
+      properties:
+        title:
+          type: string
+      required:
+        - title
+
+    OpenaiMessageInput:
+      type: object
+      properties:
+        content:
+          type: string
+      required:
+        - content
+
+    OpenaiConversationWithMessages:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpenaiMessage"
+      required:
+        - id
+        - title
+        - createdAt
+        - messages
