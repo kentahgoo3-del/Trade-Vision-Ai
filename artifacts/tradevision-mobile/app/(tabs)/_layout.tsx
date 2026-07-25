@@ -1,15 +1,9 @@
 import React from 'react';
 import { Platform, StyleSheet, useColorScheme, View } from 'react-native';
 import { useColors } from '@/hooks/useColors';
-import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { Tabs } from 'expo-router';
-
-type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
-
-function TabIcon({ name, color, size = 24 }: { name: IoniconName; color: string; size?: number }) {
-  return <Ionicons name={name} size={size} color={color} />;
-}
+import { HomeIcon, AnalyzeIcon, WatchlistIcon, JournalIcon, ChatIcon } from '@/components/TabIcon';
 
 export default function TabLayout() {
   const colors = useColors();
@@ -49,7 +43,7 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon name={focused ? 'home' : 'home-outline'} color={color} />
+            <HomeIcon color={color} size={24} focused={focused} />
           ),
         }}
       />
@@ -58,7 +52,7 @@ export default function TabLayout() {
         options={{
           title: 'Analyze',
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon name={focused ? 'bar-chart' : 'bar-chart-outline'} color={color} />
+            <AnalyzeIcon color={color} size={24} focused={focused} />
           ),
         }}
       />
@@ -67,7 +61,7 @@ export default function TabLayout() {
         options={{
           title: 'Watchlist',
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon name={focused ? 'eye' : 'eye-outline'} color={color} />
+            <WatchlistIcon color={color} size={24} focused={focused} />
           ),
         }}
       />
@@ -76,7 +70,7 @@ export default function TabLayout() {
         options={{
           title: 'Journal',
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon name={focused ? 'book' : 'book-outline'} color={color} />
+            <JournalIcon color={color} size={24} focused={focused} />
           ),
         }}
       />
@@ -85,7 +79,7 @@ export default function TabLayout() {
         options={{
           title: 'AI Chat',
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon name={focused ? 'chatbubble' : 'chatbubble-outline'} color={color} />
+            <ChatIcon color={color} size={24} focused={focused} />
           ),
         }}
       />
