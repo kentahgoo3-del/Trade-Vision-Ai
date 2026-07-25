@@ -24,10 +24,10 @@ import {
 
 // ── Market Sessions ────────────────────────────────────────────────────────────
 const SESSIONS = [
-  { name: 'Sydney',   code: 'SYD', openH: 21, closeH: 6,  color: '#8B5CF6' },
-  { name: 'Tokyo',    code: 'TYO', openH: 0,  closeH: 9,  color: '#F59E0B' },
-  { name: 'London',   code: 'LON', openH: 7,  closeH: 16, color: '#3B82F6' },
-  { name: 'New York', code: 'NYC', openH: 12, closeH: 21, color: '#10B981' },
+  { name: 'Sydney',   code: 'SYD', flag: '🇦🇺', openH: 21, closeH: 6,  color: '#8B5CF6' },
+  { name: 'Tokyo',    code: 'TYO', flag: '🇯🇵', openH: 0,  closeH: 9,  color: '#F59E0B' },
+  { name: 'London',   code: 'LON', flag: '🇬🇧', openH: 7,  closeH: 16, color: '#3B82F6' },
+  { name: 'New York', code: 'NYC', flag: '🇺🇸', openH: 12, closeH: 21, color: '#10B981' },
 ] as const;
 
 function isSessionOpen(h: number, openH: number, closeH: number) {
@@ -82,9 +82,7 @@ function MarketSessionsWidget() {
               backgroundColor: open ? s.color + '20' : colors.secondary,
               borderColor: open ? s.color + '60' : colors.border,
             }]}>
-              <View style={[mwStyles.codeBadge, { backgroundColor: s.color + (open ? '30' : '18') }]}>
-                <Text style={[mwStyles.codeText, { color: open ? s.color : colors.mutedForeground }]}>{s.code}</Text>
-              </View>
+              <Text style={mwStyles.flag}>{s.flag}</Text>
               <Text style={[mwStyles.sessionName, { color: open ? s.color : colors.mutedForeground }]} numberOfLines={1}>
                 {s.name}
               </Text>
