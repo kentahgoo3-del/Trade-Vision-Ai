@@ -45,7 +45,11 @@ export default function ChatScreen() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [streaming, setStreaming] = useState(false);
+  const [inputHeight, setInputHeight] = useState(44);
   const flatListRef = useRef<FlatList>(null);
+
+  const MIN_INPUT_HEIGHT = 44;
+  const MAX_INPUT_HEIGHT = 140;
 
   const startConversation = useCallback(async () => {
     const convo = await createConvo({ data: { title: 'Trading Analysis Chat' } });
@@ -74,6 +78,7 @@ export default function ChatScreen() {
     if (!input.trim() || !activeConvoId || streaming) return;
     const text = input.trim();
     setInput('');
+    setInputHeight(MIN_INPUT_HEIGHT);
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
     const userMsg: ChatMessage = { id: Date.now().toString(), role: 'user', content: text };
@@ -259,9 +264,9 @@ export default function ChatScreen() {
       />
 
       {/* Input */}
-      <View style={[styles.inputBar, { borderTopColor: colors.border, backgroundColor: colors.card, paddingBottom: Math.max(bottomPad, 8) + 8 }]}>
+      <View style={[styles.inputBar, { borderTopColor: colors.border, backgroundColor: colors.card, paddingBottom: Math.max(bottomPad, 16) + 16 }]}>
         <TextInput
-          style={[styles.chatInput, { backgroundColor: colors.background, color: colors.foreground, borderColor: colors.primary + '60' }]}
+          style={[styles.chatInput, { backgroundColor: colors.background, color: colors.foreground, borderColor: colors.primary + '60', height: inputHeight }]}
           value={input}
           onChangeText={setInput}
           placeholder="Ask about trading, charts, patterns…"
@@ -271,6 +276,10 @@ export default function ChatScreen() {
           returnKeyType="send"
           blurOnSubmit={false}
           onSubmitEditing={sendMessage}
+          onContentSizeChange={(e) => {
+            const h = e.nativeEvent.contentSize.height;
+            setInputHeight(Math.min(Math.max(h, MIN_INPUT_HEIGHT), MAX_INPUT_HEIGHT));
+          }}
         />
         <Pressable
           onPress={sendMessage}
@@ -318,7 +327,7 @@ const styles = StyleSheet.create({
   aiBubble: { borderWidth: 1, borderBottomLeftRadius: 4 },
   bubbleText: { fontSize: 15, fontFamily: 'Inter_400Regular', lineHeight: 22 },
   inputBar: { flexDirection: 'row', alignItems: 'flex-end', gap: 10, paddingHorizontal: 16, paddingTop: 12, borderTopWidth: 1 },
-  chatInput: { flex: 1, borderRadius: 20, borderWidth: 1, paddingHorizontal: 16, paddingVertical: 10, fontSize: 15, fontFamily: 'Inter_400Regular', maxHeight: 120 },
+  chatInput: { flex: 1, borderRadius: 20, borderWidth: 1, paddingHorizontal: 16, paddingVertical: 10, fontSize: 15, fontFamily: 'Inter_400Regular' },
   sendBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
   welcomeWrap: { alignItems: 'center', paddingVertical: 40, gap: 12, paddingHorizontal: 24 },
   welcomeIcon: { width: 72, height: 72, borderRadius: 36, alignItems: 'center', justifyContent: 'center' },
