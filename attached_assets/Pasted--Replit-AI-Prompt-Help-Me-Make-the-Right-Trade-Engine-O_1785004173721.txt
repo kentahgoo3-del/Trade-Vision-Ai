@@ -1,0 +1,579 @@
+# Replit AI Prompt – "Help Me Make the Right Trade" Engine
+
+## Objective
+
+Build an **AI Decision Engine** that acts like an experienced professional trader. The goal is **not** to tell the user what they must do, but to analyze the available evidence, identify high-probability opportunities, explain the reasoning, quantify risk, and recommend whether the user should consider entering a trade, waiting, or avoiding the market.
+
+The AI should provide transparent, explainable analysis rather than treating its outputs as guarantees.
+
+---
+
+# Core AI Workflow
+
+Whenever a user uploads a chart or selects a market:
+
+1. Analyze the uploaded chart using computer vision.
+2. Identify all technical indicators, chart patterns, and market structure.
+3. Pull the latest market price.
+4. Retrieve recent news related to the asset.
+5. Analyze overall market sentiment.
+6. Check for upcoming economic events.
+7. Evaluate multiple possible trade scenarios.
+8. Calculate confidence scores for each scenario.
+9. Recommend the highest-probability action.
+10. Explain every recommendation in plain English.
+
+---
+
+# AI Trade Decision
+
+The AI must choose only one of the following:
+
+✅ BUY (LONG)
+
+✅ SELL (SHORT)
+
+✅ WAIT
+
+✅ NO TRADE
+
+The AI should never force a trade if the evidence is weak.
+
+---
+
+# Trade Confidence Score
+
+Display a large animated score from **0–100**.
+
+Example:
+
+Overall Trade Score
+
+91 / 100
+
+Confidence
+
+Very High
+
+Color Scale
+
+95–100 = Exceptional
+
+85–94 = Strong
+
+75–84 = Good
+
+60–74 = Moderate
+
+Below 60 = Avoid
+
+---
+
+# Confidence Breakdown
+
+Show individual scores for:
+
+Trend Strength
+
+Momentum
+
+Pattern Quality
+
+Volume Confirmation
+
+Support & Resistance
+
+Risk-to-Reward
+
+Indicator Alignment
+
+News Sentiment
+
+Market Volatility
+
+Liquidity
+
+Multi-Timeframe Alignment
+
+Each score contributes to the final confidence rating.
+
+---
+
+# Trade Recommendation Card
+
+Display a professional summary including:
+
+Recommended Action
+
+BUY
+
+Probability
+
+89%
+
+Trade Quality
+
+Excellent
+
+Timeframe
+
+Swing Trade
+
+Expected Duration
+
+2–5 Days
+
+Risk Level
+
+Medium
+
+---
+
+# AI Reasoning
+
+Explain exactly why the recommendation was made.
+
+Example:
+
+The market is currently in a strong uptrend.
+
+A Bull Flag has formed after a significant impulsive move.
+
+Price has broken above resistance with above-average volume.
+
+The 20 EMA remains above the 50 EMA.
+
+RSI is bullish without being overbought.
+
+MACD has crossed upward.
+
+Recent news sentiment is positive.
+
+The 4-hour and daily trends are aligned.
+
+Risk-to-reward exceeds 1:3.
+
+---
+
+# Trade Plan
+
+Generate:
+
+Suggested Entry Zone
+
+Optimal Entry Price
+
+Stop Loss
+
+Take Profit 1
+
+Take Profit 2
+
+Take Profit 3
+
+Break-even Point
+
+Trailing Stop Recommendation
+
+Maximum Acceptable Loss
+
+Expected Profit
+
+Risk-to-Reward Ratio
+
+---
+
+# Position Size Calculator
+
+User enters:
+
+Account Balance
+
+Maximum Risk %
+
+Automatically calculate:
+
+Maximum Dollar Risk
+
+Position Size
+
+Lot Size
+
+Contracts
+
+Shares
+
+Coins
+
+Estimated Profit
+
+Estimated Loss
+
+---
+
+# Trade Checklist
+
+Before recommending a trade, verify:
+
+Trend confirmed
+
+Pattern confirmed
+
+Volume confirmed
+
+Momentum confirmed
+
+Indicators aligned
+
+Support nearby
+
+Resistance identified
+
+Risk acceptable
+
+No conflicting signals
+
+No major news within one hour
+
+Display:
+
+✔ Passed
+
+❌ Failed
+
+---
+
+# Multi-Timeframe Analysis
+
+Automatically analyze:
+
+1 Minute
+
+5 Minute
+
+15 Minute
+
+30 Minute
+
+1 Hour
+
+4 Hour
+
+Daily
+
+Weekly
+
+Show whether all timeframes agree.
+
+Example:
+
+15m
+
+Bullish
+
+1H
+
+Bullish
+
+4H
+
+Bullish
+
+Daily
+
+Bullish
+
+Overall Alignment
+
+96%
+
+---
+
+# Alternative Scenarios
+
+Instead of giving only one answer, generate multiple possibilities.
+
+Example:
+
+Scenario 1
+
+Bullish Breakout
+
+Probability
+
+78%
+
+Action
+
+BUY
+
+Scenario 2
+
+False Breakout
+
+Probability
+
+16%
+
+Action
+
+WAIT
+
+Scenario 3
+
+Bearish Reversal
+
+Probability
+
+6%
+
+Action
+
+SELL only if support breaks
+
+---
+
+# AI Market Psychology
+
+Explain what buyers and sellers are likely doing.
+
+Example:
+
+Buyers remain in control after defending support.
+
+Institutions appear to be accumulating.
+
+Retail traders may enter after confirmation.
+
+Selling pressure remains weak.
+
+---
+
+# Pattern Explanation
+
+For every detected pattern explain:
+
+What it is
+
+Why it matters
+
+Historical success rate
+
+Common failures
+
+Ideal confirmation
+
+---
+
+# Risk Assessment
+
+Calculate:
+
+Volatility
+
+Drawdown Risk
+
+Trend Risk
+
+Gap Risk
+
+News Risk
+
+Liquidity Risk
+
+Slippage Risk
+
+Display an overall:
+
+Low Risk
+
+Medium Risk
+
+High Risk
+
+---
+
+# Trade Quality Meter
+
+Rate the setup:
+
+⭐⭐⭐⭐⭐
+
+Institutional Grade
+
+⭐⭐⭐⭐
+
+High Quality
+
+⭐⭐⭐
+
+Average
+
+⭐⭐
+
+Weak
+
+⭐
+
+Avoid
+
+---
+
+# AI Trade Coach
+
+Provide coaching advice.
+
+Examples:
+
+Wait for confirmation.
+
+Don't chase the breakout.
+
+Volume needs improvement.
+
+Risk is currently too high.
+
+Take partial profits at TP1.
+
+Move stop loss to breakeven after TP1.
+
+This trade doesn't meet your risk profile.
+
+---
+
+# Historical Similarity
+
+Compare the uploaded chart with historical setups.
+
+Display:
+
+Similar historical setups
+
+Average return
+
+Average holding period
+
+Historical success rate
+
+Most similar examples
+
+---
+
+# Explain Like I'm New
+
+Provide beginner-friendly explanations.
+
+Example:
+
+A Bull Flag forms when the market rises sharply, pauses in a small downward channel, and then often continues upward. Traders look for a breakout above the flag with increasing volume.
+
+---
+
+# News Impact Analysis
+
+Retrieve recent news for the selected asset.
+
+Classify:
+
+Very Bullish
+
+Bullish
+
+Neutral
+
+Bearish
+
+Very Bearish
+
+Explain why the news matters and how it may influence the trade.
+
+---
+
+# Economic Event Warnings
+
+Check for:
+
+FOMC
+
+Interest Rates
+
+CPI
+
+PPI
+
+GDP
+
+Employment Reports
+
+NFP
+
+Earnings Releases
+
+Warn the user if high-impact events could affect the trade.
+
+---
+
+# Smart Alerts
+
+Notify users when:
+
+Trade quality exceeds 90
+
+Trend changes
+
+Support breaks
+
+Resistance breaks
+
+Stop loss is near
+
+Target reached
+
+High-impact news is released
+
+---
+
+# AI Chat Assistant
+
+Allow users to ask follow-up questions, such as:
+
+* Why do you recommend buying?
+* What could invalidate this setup?
+* Show me a more conservative trade.
+* Explain the RSI reading.
+* What happens if support fails?
+* Compare this setup with yesterday's.
+* Is this a better trade than Bitcoin?
+* Should I wait for confirmation?
+
+---
+
+# User Interface
+
+Create a premium trading dashboard with:
+
+* Large Trade Score gauge
+* Recommendation banner (BUY / SELL / WAIT / NO TRADE)
+* Interactive confidence charts
+* Entry, stop-loss, and take-profit cards
+* Risk gauge
+* Multi-timeframe alignment panel
+* Pattern recognition panel
+* News and sentiment panel
+* Economic calendar widget
+* Position size calculator
+* AI reasoning panel
+* Historical similarity section
+* AI chat sidebar
+
+Use a modern dark theme with smooth animations, glassmorphism effects, responsive layouts, and a clean, professional design inspired by institutional trading platforms.
+
+---
+
+# Important Behavior Rules
+
+* Never recommend a trade unless the confidence score meets a configurable threshold (for example, 75/100).
+* Prefer **WAIT** or **NO TRADE** over low-quality setups.
+* Clearly distinguish facts (e.g., detected chart features) from AI inferences (e.g., likely continuation).
+* Explain every recommendation with evidence so users can understand the reasoning.
+* Present outputs as educational decision support, not guaranteed outcomes or personalized financial advice.
