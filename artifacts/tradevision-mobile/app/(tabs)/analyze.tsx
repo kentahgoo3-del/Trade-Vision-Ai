@@ -39,6 +39,25 @@ export default function AnalyzeScreen() {
   const { data: analyses, isLoading: listLoading } = useListAnalyses();
   const { mutateAsync: createAnalysis, isPending } = useCreateAnalysis();
 
+  // Compute the set of superseded analysis IDs.
+  // An error or pending analysis is superseded when a newer analysis for the
+  // same symbol exists in the list (symbol must be non-null/empty to match).
+  const supersededIds = React.useMemo<Set<string>>(() => {
+    if (!analyses) return new Set();
+    const ids = new Set<string>();
+    for (const a of analyses) {
+      if ((a.status !== 'error' && a.status !== 'pending') || !a.symbol) continue;
+      const hasNewer = analyses.some(
+        (b) =>
+          b.id !== a.id &&
+          b.symbol === a.symbol &&
+          new Date(b.createdAt).getTime() > new Date(a.createdAt).getTime(),
+      );
+      if (hasNewer) ids.add(a.id);
+    }
+    return ids;
+  }, [analyses]);
+
   const topPad = Platform.OS === 'web' ? 67 : insets.top;
 
   const pickImage = async () => {
@@ -229,6 +248,7 @@ export default function AnalyzeScreen() {
             <AnalysisCard
               key={a.id}
               analysis={a}
+              isSuperseded={supersededIds.has(a.id)}
               onPress={() => router.push(`/analysis/${a.id}`)}
             />
           ))

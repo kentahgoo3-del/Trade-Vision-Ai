@@ -9,6 +9,7 @@ import type { Analysis } from '@workspace/api-client-react';
 interface Props {
   analysis: Analysis;
   onPress?: () => void;
+  isSuperseded?: boolean;
 }
 
 type DecisionType = 'BUY' | 'SELL' | 'WAIT' | 'NO TRADE';
@@ -30,7 +31,7 @@ function useDecisionColors(colors: ReturnType<typeof useColors>) {
   };
 }
 
-export function AnalysisCard({ analysis, onPress }: Props) {
+export function AnalysisCard({ analysis, onPress, isSuperseded = false }: Props) {
   const colors = useColors();
   const getDecisionColors = useDecisionColors(colors);
 
@@ -51,7 +52,12 @@ export function AnalysisCard({ analysis, onPress }: Props) {
       onPress={onPress}
       style={({ pressed }) => [
         styles.card,
-        { backgroundColor: colors.card, borderColor: colors.border, opacity: pressed ? 0.85 : 1 },
+        {
+          backgroundColor: colors.card,
+          borderColor: isSuperseded ? colors.border : colors.border,
+          borderStyle: isSuperseded ? 'dashed' : 'solid',
+          opacity: pressed ? 0.85 : isSuperseded ? 0.45 : 1,
+        },
       ]}
     >
       <View style={styles.header}>
@@ -66,6 +72,11 @@ export function AnalysisCard({ analysis, onPress }: Props) {
           ) : null}
           {analysis.status === 'complete' && !hasDecision ? (
             <TrendBadge trend={analysis.trend} size="sm" />
+          ) : null}
+          {isSuperseded ? (
+            <View style={[styles.supersededBadge, { backgroundColor: colors.muted, borderColor: colors.border }]}>
+              <Text style={[styles.supersededText, { color: colors.mutedForeground }]}>Superseded</Text>
+            </View>
           ) : null}
         </View>
         <Text style={[styles.time, { color: colors.mutedForeground }]}>{timeAgo(analysis.createdAt)}</Text>
@@ -162,4 +173,11 @@ const styles = StyleSheet.create({
   tradeText: { fontSize: 12, fontFamily: 'Inter_600SemiBold' },
   pending: { fontSize: 13, fontFamily: 'Inter_500Medium' },
   chevron: { position: 'absolute', right: 16, bottom: 16 },
+  supersededBadge: {
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  supersededText: { fontSize: 10, fontFamily: 'Inter_500Medium', letterSpacing: 0.3 },
 });
