@@ -1,53 +1,55 @@
 const colors = {
   light: {
-    text: '#0D1117',
-    tint: '#00C896',
-    background: '#F8FAFC',
-    foreground: '#0D1117',
-    card: '#FFFFFF',
-    cardForeground: '#0D1117',
-    primary: '#00C896',
-    primaryForeground: '#FFFFFF',
-    secondary: '#F1F5F9',
-    secondaryForeground: '#0D1117',
-    muted: '#F1F5F9',
-    mutedForeground: '#64748B',
-    accent: '#F59E0B',
-    accentForeground: '#FFFFFF',
-    destructive: '#EF4444',
+    // ── Professional trading terminal — light ──────────────────────────────
+    text:                '#0A1628',
+    tint:                '#1A6B4A',
+    background:          '#EFF3FA',   // cool steel-blue gray, not stark white
+    foreground:          '#0A1628',   // deep navy-black
+    card:                '#FFFFFF',
+    cardForeground:      '#0A1628',
+    primary:             '#1A6B4A',   // deep forest green — serious, not neon
+    primaryForeground:   '#FFFFFF',
+    secondary:           '#E2EAF5',
+    secondaryForeground: '#0A1628',
+    muted:               '#E2EAF5',
+    mutedForeground:     '#526077',   // blue-slate
+    accent:              '#A8620B',   // deep amber — financial gold
+    accentForeground:    '#FFFFFF',
+    destructive:         '#C0311F',   // deeper, more serious red
     destructiveForeground: '#FFFFFF',
-    border: '#E2E8F0',
-    input: '#F1F5F9',
-    bullish: '#00C896',
-    bearish: '#EF4444',
-    neutral: '#94A3B8',
-    gold: '#F59E0B',
+    border:              '#C8D4E6',
+    input:               '#EBF0F8',
+    bullish:             '#1A6B4A',   // matches primary
+    bearish:             '#C0311F',
+    neutral:             '#6B8099',
+    gold:                '#A8620B',
   },
   dark: {
-    text: '#F0F2F5',
-    tint: '#00C896',
-    background: '#0D0E12',
-    foreground: '#F0F2F5',
-    card: '#161820',
-    cardForeground: '#F0F2F5',
-    primary: '#00C896',
-    primaryForeground: '#000000',
-    secondary: '#1E2030',
-    secondaryForeground: '#F0F2F5',
-    muted: '#1A1C24',
-    mutedForeground: '#6B7280',
-    accent: '#F59E0B',
-    accentForeground: '#000000',
-    destructive: '#EF4444',
+    // ── Professional trading terminal — dark (Bloomberg / TradingView feel) ─
+    text:                '#C4D2E8',
+    tint:                '#00B87A',
+    background:          '#060D18',   // deep navy-black
+    foreground:          '#C4D2E8',   // cool off-white
+    card:                '#0C1826',   // dark navy card
+    cardForeground:      '#C4D2E8',
+    primary:             '#00B87A',   // readable green on dark, not neon
+    primaryForeground:   '#000D18',
+    secondary:           '#101E32',
+    secondaryForeground: '#C4D2E8',
+    muted:               '#0D1829',
+    mutedForeground:     '#547090',   // blue-gray
+    accent:              '#D4880C',   // rich amber
+    accentForeground:    '#000000',
+    destructive:         '#E04040',
     destructiveForeground: '#FFFFFF',
-    border: '#252836',
-    input: '#1E2030',
-    bullish: '#00C896',
-    bearish: '#EF4444',
-    neutral: '#94A3B8',
-    gold: '#F59E0B',
+    border:              '#152540',   // navy border
+    input:               '#101E32',
+    bullish:             '#00B87A',
+    bearish:             '#E04040',
+    neutral:             '#6E90A8',
+    gold:                '#D4880C',
   },
-  radius: 12,
+  radius: 10,
 };
 
 export default colors;
