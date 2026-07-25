@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { useColors } from '@/hooks/useColors';
 import { useTheme } from '@/contexts/ThemeContext';
 import { BlurView } from 'expo-blur';
-import { Tabs } from 'expo-router';
+import { Tabs, router } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { HomeIcon, AnalyzeIcon, WatchlistIcon, JournalIcon, ChatIcon, SettingsIcon } from '@/components/TabIcon';
+
+const LAST_TAB_KEY = '@tradevision:last_active_tab';
+const VALID_TABS = ['index', 'analyze', 'watchlist', 'journal', 'chat', 'settings'] as const;
+type TabName = typeof VALID_TABS[number];
 
 export default function TabLayout() {
   const colors = useColors();
@@ -12,9 +17,36 @@ export default function TabLayout() {
   const isDark = resolvedScheme === 'dark';
   const isIOS = Platform.OS === 'ios';
   const isWeb = Platform.OS === 'web';
+  const didRestoreTab = useRef(false);
+
+  // Restore last active tab on first mount
+  useEffect(() => {
+    if (didRestoreTab.current) return;
+    didRestoreTab.current = true;
+
+    AsyncStorage.getItem(LAST_TAB_KEY)
+      .then((val) => {
+        if (val && VALID_TABS.includes(val as TabName) && val !== 'index') {
+          // Navigate to the stored tab; 'index' is home and needs no redirect
+          router.replace(`/(tabs)/${val}` as any);
+        }
+      })
+      .catch(() => {
+        // Ignore read errors — fall back to Home
+      });
+  }, []);
 
   return (
     <Tabs
+      screenListeners={{
+        focus: (e) => {
+          // e.target is a route key like "analyze-abc123"; the name is the prefix before the first '-'
+          const tabName = e.target?.split('-')[0];
+          if (tabName && VALID_TABS.includes(tabName as TabName)) {
+            AsyncStorage.setItem(LAST_TAB_KEY, tabName).catch(() => {});
+          }
+        },
+      }}
       screenOptions={{
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.mutedForeground,
