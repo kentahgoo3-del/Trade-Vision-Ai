@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@/components/Icon';
 import { useColors } from '@/hooks/useColors';
 
 interface Props {
@@ -22,7 +22,7 @@ export function TrendBadge({ trend, size = 'md' }: Props) {
 
   return (
     <View style={[styles.badge, { backgroundColor: config.color + '20', borderColor: config.color + '40' }]}>
-      <Ionicons name={config.icon} size={isSmall ? 11 : 13} color={config.color} />
+      <Icon name={config.icon} size={isSmall ? 11 : 13} color={config.color} />
       <Text style={[styles.label, { color: config.color, fontSize: isSmall ? 9 : 11 }]}>
         {config.label}
       </Text>

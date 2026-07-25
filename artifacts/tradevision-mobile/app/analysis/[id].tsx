@@ -11,7 +11,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@/components/Icon';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useQueryClient } from '@tanstack/react-query';
@@ -121,7 +121,7 @@ function SectionTitle({ title, icon }: { title: string; icon?: string }) {
   const colors = useColors();
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-      {icon ? <Ionicons name={icon as any} size={16} color={colors.primary} /> : null}
+      {icon ? <Icon name={icon as any} size={16} color={colors.primary} /> : null}
       <Text style={{ fontSize: 14, fontFamily: 'Inter_700Bold', color: colors.mutedForeground, letterSpacing: 1, textTransform: 'uppercase' }}>
         {title}
       </Text>
@@ -167,7 +167,7 @@ function StarRating({ stars }: { stars: number }) {
     <View style={{ alignItems: 'center', gap: 6 }}>
       <View style={{ flexDirection: 'row', gap: 6 }}>
         {[1, 2, 3, 4, 5].map((i) => (
-          <Ionicons key={i} name={i <= stars ? 'star' : 'star-outline'} size={24} color={i <= stars ? colors.gold : colors.muted} />
+          <Icon key={i} name={i <= stars ? 'star' : 'star-outline'} size={24} color={i <= stars ? colors.gold : colors.muted} />
         ))}
       </View>
       <Text style={{ fontSize: 13, fontFamily: 'Inter_600SemiBold', color: colors.gold }}>{labels[stars] ?? ''}</Text>
@@ -312,7 +312,7 @@ export default function AnalysisDetailScreen() {
       {/* Nav */}
       <View style={styles.nav}>
         <Pressable onPress={() => router.back()} hitSlop={12} style={[styles.navBtn, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Ionicons name="arrow-back" size={20} color={colors.foreground} />
+          <Icon name="arrow-back" size={20} color={colors.foreground} />
         </Pressable>
         <View style={{ flex: 1, alignItems: 'center' }}>
           <Text style={{ fontSize: 16, fontFamily: 'Inter_700Bold', color: colors.foreground }}>
@@ -323,7 +323,7 @@ export default function AnalysisDetailScreen() {
           ) : null}
         </View>
         <Pressable onPress={handleDelete} hitSlop={12} style={[styles.navBtn, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Ionicons name="trash-outline" size={18} color={colors.destructive} />
+          <Icon name="trash-outline" size={18} color={colors.destructive} />
         </Pressable>
       </View>
 
@@ -331,7 +331,7 @@ export default function AnalysisDetailScreen() {
       <View style={[styles.decisionBanner, { backgroundColor: decColor + '18', borderColor: decColor, borderWidth: 1.5 }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
           <View style={[styles.decisionBadge, { backgroundColor: decColor }]}>
-            <Ionicons
+            <Icon
               name={decision === 'BUY' ? 'trending-up' : decision === 'SELL' ? 'trending-down' : 'time-outline'}
               size={20} color="#fff"
             />
@@ -370,7 +370,7 @@ export default function AnalysisDetailScreen() {
               >
                 {outcomeLoading === o
                   ? <ActivityIndicator size="small" color={col} />
-                  : <Ionicons name={icon as any} size={16} color={active ? col : colors.mutedForeground} />
+                  : <Icon name={icon as any} size={16} color={active ? col : colors.mutedForeground} />
                 }
                 <Text style={{ fontSize: 13, fontFamily: 'Inter_600SemiBold', color: active ? col : colors.mutedForeground }}>
                   {o.charAt(0).toUpperCase() + o.slice(1)}
@@ -387,7 +387,7 @@ export default function AnalysisDetailScreen() {
             backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1,
           }]}
         >
-          <Ionicons name="journal-outline" size={18} color={colors.primaryForeground} />
+          <Icon name="journal-outline" size={18} color={colors.primaryForeground} />
           <Text style={{ fontSize: 15, fontFamily: 'Inter_600SemiBold', color: colors.primaryForeground }}>
             Log This Trade
           </Text>
@@ -522,7 +522,7 @@ export default function AnalysisDetailScreen() {
             const passed = checklist[key];
             return (
               <View key={key} style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 6 }}>
-                <Ionicons
+                <Icon
                   name={passed ? 'checkmark-circle' : 'close-circle'}
                   size={18}
                   color={passed ? colors.bullish : colors.bearish}
@@ -549,7 +549,7 @@ export default function AnalysisDetailScreen() {
               <View key={t.timeframe} style={[styles.tfChip, { backgroundColor: biasColor(t.bias, colors) + '18', borderColor: biasColor(t.bias, colors) + '60' }]}>
                 <Text style={{ fontSize: 11, fontFamily: 'Inter_700Bold', color: colors.mutedForeground }}>{t.timeframe}</Text>
                 <Text style={{ fontSize: 13, fontFamily: 'Inter_700Bold', color: biasColor(t.bias, colors) }}>{t.bias}</Text>
-                <Ionicons name={t.agreement ? 'checkmark-circle' : 'alert-circle'} size={13} color={t.agreement ? colors.bullish : colors.gold} />
+                <Icon name={t.agreement ? 'checkmark-circle' : 'alert-circle'} size={13} color={t.agreement ? colors.bullish : colors.gold} />
               </View>
             ))}
           </View>
@@ -632,7 +632,7 @@ export default function AnalysisDetailScreen() {
                   <Text style={{ fontSize: 14, fontFamily: 'Inter_700Bold', color: colors.foreground }}>{pe.name}</Text>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                     <Text style={{ fontSize: 12, fontFamily: 'Inter_600SemiBold', color: colors.primary }}>{pe.successRate}</Text>
-                    <Ionicons name={expanded ? 'chevron-up' : 'chevron-down'} size={16} color={colors.mutedForeground} />
+                    <Icon name={expanded ? 'chevron-up' : 'chevron-down'} size={16} color={colors.mutedForeground} />
                   </View>
                 </Pressable>
                 {expanded && (
@@ -667,7 +667,7 @@ export default function AnalysisDetailScreen() {
           <SectionTitle title="AI Trade Coach" icon="school" />
           {coaching.map((tip, i) => (
             <View key={i} style={[styles.coachTip, { backgroundColor: colors.primary + '10', borderLeftColor: colors.primary }]}>
-              <Ionicons name="bulb-outline" size={14} color={colors.primary} />
+              <Icon name="bulb-outline" size={14} color={colors.primary} />
               <Text style={{ fontSize: 13, fontFamily: 'Inter_400Regular', color: colors.foreground, flex: 1, lineHeight: 19 }}>{tip}</Text>
             </View>
           ))}
@@ -692,7 +692,7 @@ export default function AnalysisDetailScreen() {
         <Card>
           <SectionTitle title="Explain Like I'm New" icon="help-circle" />
           <View style={[styles.beginnerBox, { backgroundColor: colors.primary + '0D', borderColor: colors.primary + '30' }]}>
-            <Ionicons name="school-outline" size={20} color={colors.primary} style={{ marginBottom: 8 }} />
+            <Icon name="school-outline" size={20} color={colors.primary} style={{ marginBottom: 8 }} />
             <Text style={{ fontSize: 14, fontFamily: 'Inter_400Regular', color: colors.foreground, lineHeight: 22 }}>
               {analysis.beginnerExplanation as string}
             </Text>
@@ -709,7 +709,7 @@ export default function AnalysisDetailScreen() {
               <Text style={{ fontSize: 11, fontFamily: 'Inter_700Bold', color: colors.bullish, marginBottom: 6, letterSpacing: 0.8 }}>SUPPORTING EVIDENCE</Text>
               {strengths.map((s, i) => (
                 <View key={i} style={{ flexDirection: 'row', gap: 8, paddingVertical: 3, alignItems: 'flex-start' }}>
-                  <Ionicons name="checkmark-circle" size={15} color={colors.bullish} style={{ marginTop: 1 }} />
+                  <Icon name="checkmark-circle" size={15} color={colors.bullish} style={{ marginTop: 1 }} />
                   <Text style={{ fontSize: 13, fontFamily: 'Inter_400Regular', color: colors.foreground, flex: 1 }}>{s}</Text>
                 </View>
               ))}
@@ -720,7 +720,7 @@ export default function AnalysisDetailScreen() {
               <Text style={{ fontSize: 11, fontFamily: 'Inter_700Bold', color: colors.gold, marginBottom: 6, letterSpacing: 0.8 }}>WEAKNESSES</Text>
               {weaknesses.map((w, i) => (
                 <View key={i} style={{ flexDirection: 'row', gap: 8, paddingVertical: 3, alignItems: 'flex-start' }}>
-                  <Ionicons name="warning" size={15} color={colors.gold} style={{ marginTop: 1 }} />
+                  <Icon name="warning" size={15} color={colors.gold} style={{ marginTop: 1 }} />
                   <Text style={{ fontSize: 13, fontFamily: 'Inter_400Regular', color: colors.foreground, flex: 1 }}>{w}</Text>
                 </View>
               ))}
@@ -731,7 +731,7 @@ export default function AnalysisDetailScreen() {
               <Text style={{ fontSize: 11, fontFamily: 'Inter_700Bold', color: colors.bearish, marginBottom: 6, letterSpacing: 0.8 }}>RISK FACTORS</Text>
               {risks.map((r, i) => (
                 <View key={i} style={{ flexDirection: 'row', gap: 8, paddingVertical: 3, alignItems: 'flex-start' }}>
-                  <Ionicons name="close-circle" size={15} color={colors.bearish} style={{ marginTop: 1 }} />
+                  <Icon name="close-circle" size={15} color={colors.bearish} style={{ marginTop: 1 }} />
                   <Text style={{ fontSize: 13, fontFamily: 'Inter_400Regular', color: colors.foreground, flex: 1 }}>{r}</Text>
                 </View>
               ))}

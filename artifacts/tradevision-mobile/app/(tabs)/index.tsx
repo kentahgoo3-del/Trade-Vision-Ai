@@ -9,7 +9,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@/components/Icon';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
@@ -95,7 +95,7 @@ function MarketSessionsWidget() {
       </View>
       {nextSession && (
         <View style={mwStyles.nextRow}>
-          <Ionicons name="time-outline" size={12} color={colors.mutedForeground} />
+          <Icon name="time-outline" size={12} color={colors.mutedForeground} />
           <Text style={[mwStyles.next, { color: colors.mutedForeground }]}>
             {nextSession.name} opens in {formatMins(nextSession.mins)}
           </Text>

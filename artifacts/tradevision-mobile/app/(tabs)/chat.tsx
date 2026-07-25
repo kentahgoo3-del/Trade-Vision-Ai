@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@/components/Icon';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useQueryClient } from '@tanstack/react-query';
@@ -135,7 +135,7 @@ export default function ChatScreen() {
       <View style={[styles.msgRow, isUser ? styles.msgRight : styles.msgLeft]}>
         {!isUser && (
           <View style={[styles.avatar, { backgroundColor: colors.primary + '20' }]}>
-            <Ionicons name="flash" size={14} color={colors.primary} />
+            <Icon name="flash" size={14} color={colors.primary} />
           </View>
         )}
         <View
@@ -174,7 +174,7 @@ export default function ChatScreen() {
           onPress={startConversation}
           style={({ pressed }) => [styles.newChatBtn, { backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1, marginHorizontal: 16 }]}
         >
-          <Ionicons name="add-circle" size={20} color={colors.primaryForeground} />
+          <Icon name="add-circle" size={20} color={colors.primaryForeground} />
           <Text style={[styles.newChatText, { color: colors.primaryForeground }]}>New Conversation</Text>
         </Pressable>
 
@@ -183,7 +183,7 @@ export default function ChatScreen() {
         ) : !convos?.length ? (
           <View style={{ flex: 1, marginTop: 40 }}>
             <View style={[styles.emptyWrap, { backgroundColor: colors.card, borderColor: colors.border, marginHorizontal: 16 }]}>
-              <Ionicons name="chatbubbles-outline" size={40} color={colors.mutedForeground} />
+              <Icon name="chatbubbles-outline" size={40} color={colors.mutedForeground} />
               <Text style={[styles.emptyTitle, { color: colors.foreground }]}>No conversations yet</Text>
               <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>
                 Start a conversation with your AI trading assistant
@@ -201,7 +201,7 @@ export default function ChatScreen() {
                 style={({ pressed }) => [styles.convoRow, { backgroundColor: colors.card, borderColor: colors.border, opacity: pressed ? 0.85 : 1 }]}
               >
                 <View style={[styles.convoIcon, { backgroundColor: colors.primary + '15' }]}>
-                  <Ionicons name="chatbubble-outline" size={20} color={colors.primary} />
+                  <Icon name="chatbubble-outline" size={20} color={colors.primary} />
                 </View>
                 <View style={styles.convoInfo}>
                   <Text style={[styles.convoTitle, { color: colors.foreground }]}>{item.title}</Text>
@@ -209,7 +209,7 @@ export default function ChatScreen() {
                     {new Date(item.createdAt).toLocaleDateString()}
                   </Text>
                 </View>
-                <Ionicons name="chevron-forward" size={18} color={colors.mutedForeground} />
+                <Icon name="chevron-forward" size={18} color={colors.mutedForeground} />
               </Pressable>
             )}
           />
@@ -228,7 +228,7 @@ export default function ChatScreen() {
       {/* Header */}
       <View style={[styles.chatHeader, { paddingTop: topPad + 8, borderBottomColor: colors.border, backgroundColor: colors.background }]}>
         <Pressable onPress={() => setActiveConvoId(null)} hitSlop={12}>
-          <Ionicons name="arrow-back" size={24} color={colors.foreground} />
+          <Icon name="arrow-back" size={24} color={colors.foreground} />
         </Pressable>
         <View style={[styles.aiIndicator, { backgroundColor: colors.primary + '15' }]}>
           <View style={[styles.aiDot, { backgroundColor: colors.primary }]} />
@@ -252,7 +252,7 @@ export default function ChatScreen() {
           messages.length === 0 ? (
             <View style={styles.welcomeWrap}>
               <View style={[styles.welcomeIcon, { backgroundColor: colors.primary + '15' }]}>
-                <Ionicons name="flash" size={32} color={colors.primary} />
+                <Icon name="flash" size={32} color={colors.primary} />
               </View>
               <Text style={[styles.welcomeTitle, { color: colors.foreground }]}>TradeVision AI</Text>
               <Text style={[styles.welcomeText, { color: colors.mutedForeground }]}>
@@ -289,7 +289,7 @@ export default function ChatScreen() {
           {streaming ? (
             <ActivityIndicator size="small" color={colors.mutedForeground} />
           ) : (
-            <Ionicons name="arrow-up" size={20} color={input.trim() && !streaming ? colors.primaryForeground : colors.mutedForeground} />
+            <Icon name="arrow-up" size={20} color={input.trim() && !streaming ? colors.primaryForeground : colors.mutedForeground} />
           )}
         </Pressable>
       </View>

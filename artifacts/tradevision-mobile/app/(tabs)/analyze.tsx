@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 import { Image } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@/components/Icon';
 import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -248,7 +248,7 @@ export default function AnalyzeScreen() {
           onPress={() => router.push('/checklist')}
           style={({ pressed }) => [styles.checklistBtn, { backgroundColor: colors.card, borderColor: colors.border, opacity: pressed ? 0.7 : 1 }]}
         >
-          <Ionicons name="checkmark-done-outline" size={16} color={colors.primary} />
+          <Icon name="checkmark-done-outline" size={16} color={colors.primary} />
           <Text style={[styles.checklistBtnText, { color: colors.primary }]}>Checklist</Text>
         </Pressable>
       </View>
@@ -262,13 +262,13 @@ export default function AnalyzeScreen() {
               onPress={() => { setImageUri(null); setImageBase64(null); }}
               style={[styles.clearBtn, { backgroundColor: colors.destructive }]}
             >
-              <Ionicons name="close" size={16} color="#fff" />
+              <Icon name="close" size={16} color="#fff" />
             </Pressable>
           </View>
         ) : (
           <View style={styles.uploadPrompt}>
             <View style={[styles.uploadIconWrap, { backgroundColor: colors.primary + '15' }]}>
-              <Ionicons name="bar-chart-outline" size={36} color={colors.primary} />
+              <Icon name="bar-chart-outline" size={36} color={colors.primary} />
             </View>
             <Text style={[styles.uploadTitle, { color: colors.foreground }]}>Upload Chart</Text>
             <Text style={[styles.uploadSub, { color: colors.mutedForeground }]}>
@@ -279,14 +279,14 @@ export default function AnalyzeScreen() {
                 onPress={pickImage}
                 style={({ pressed }) => [styles.uploadBtn, { backgroundColor: colors.primary, opacity: pressed ? 0.8 : 1 }]}
               >
-                <Ionicons name="images-outline" size={18} color={colors.primaryForeground} />
+                <Icon name="images-outline" size={18} color={colors.primaryForeground} />
                 <Text style={[styles.uploadBtnText, { color: colors.primaryForeground }]}>Gallery</Text>
               </Pressable>
               <Pressable
                 onPress={takePhoto}
                 style={({ pressed }) => [styles.uploadBtn, { backgroundColor: colors.secondary, borderWidth: 1, borderColor: colors.border, opacity: pressed ? 0.8 : 1 }]}
               >
-                <Ionicons name="camera-outline" size={18} color={colors.foreground} />
+                <Icon name="camera-outline" size={18} color={colors.foreground} />
                 <Text style={[styles.uploadBtnText, { color: colors.foreground }]}>Camera</Text>
               </Pressable>
             </View>
@@ -377,7 +377,7 @@ export default function AnalyzeScreen() {
           </>
         ) : (
           <>
-            <Ionicons name="flash" size={20} color={!imageBase64 ? colors.mutedForeground : colors.primaryForeground} />
+            <Icon name="flash" size={20} color={!imageBase64 ? colors.mutedForeground : colors.primaryForeground} />
             <Text style={[styles.analyzeBtnText, { color: !imageBase64 ? colors.mutedForeground : colors.primaryForeground }]}>
               Analyze Chart
             </Text>
@@ -397,7 +397,7 @@ export default function AnalyzeScreen() {
                 { borderColor: colors.destructive, opacity: pressed ? 0.7 : 1 },
               ]}
             >
-              <Ionicons name="trash-outline" size={13} color={colors.destructive} />
+              <Icon name="trash-outline" size={13} color={colors.destructive} />
               <Text style={[styles.clearFailedText, { color: colors.destructive }]}>
                 Clear failed ({failedCount})
               </Text>

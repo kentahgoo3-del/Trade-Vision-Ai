@@ -9,7 +9,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@/components/Icon';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
@@ -118,7 +118,7 @@ export default function ChecklistScreen() {
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} hitSlop={12}
             style={[styles.backBtn, { borderColor: colors.border }]}>
-            <Ionicons name="chevron-back" size={20} color={colors.foreground} />
+            <Icon name="chevron-back" size={20} color={colors.foreground} />
           </Pressable>
           <View style={{ flex: 1 }}>
             <Text style={[styles.title, { color: colors.foreground }]}>Pre-Trade Checklist</Text>
@@ -166,7 +166,7 @@ export default function ChecklistScreen() {
                     borderColor: item.checked ? colors.bullish : colors.border,
                   }
                 ]}>
-                  {item.checked && <Ionicons name="checkmark" size={14} color="#fff" />}
+                  {item.checked && <Icon name="checkmark" size={14} color="#fff" />}
                 </View>
                 <Text style={[
                   styles.rowLabel,
@@ -179,7 +179,7 @@ export default function ChecklistScreen() {
                 </Text>
                 {!item.isDefault && (
                   <Pressable onPress={() => removeItem(item.id)} hitSlop={10}>
-                    <Ionicons name="close-circle-outline" size={18} color={colors.mutedForeground} />
+                    <Icon name="close-circle-outline" size={18} color={colors.mutedForeground} />
                   </Pressable>
                 )}
               </Pressable>
@@ -216,7 +216,7 @@ export default function ChecklistScreen() {
             onPress={() => setShowAddInput(true)}
             style={({ pressed }) => [styles.addItemBtn, { borderColor: colors.border, opacity: pressed ? 0.7 : 1 }]}
           >
-            <Ionicons name="add-circle-outline" size={18} color={colors.primary} />
+            <Icon name="add-circle-outline" size={18} color={colors.primary} />
             <Text style={[styles.addItemText, { color: colors.primary }]}>Add Custom Item</Text>
           </Pressable>
         )}

@@ -9,7 +9,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@/components/Icon';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useQueryClient } from '@tanstack/react-query';
@@ -91,17 +91,17 @@ export default function JournalDetailScreen() {
     >
       <View style={styles.nav}>
         <Pressable onPress={() => router.back()} hitSlop={12}>
-          <Ionicons name="arrow-back" size={24} color={colors.foreground} />
+          <Icon name="arrow-back" size={24} color={colors.foreground} />
         </Pressable>
         <Pressable onPress={handleDelete} hitSlop={12}>
-          <Ionicons name="trash-outline" size={22} color={colors.destructive} />
+          <Icon name="trash-outline" size={22} color={colors.destructive} />
         </Pressable>
       </View>
 
       <View style={styles.header}>
         <Text style={[styles.symbol, { color: colors.foreground }]}>{entry.symbol}</Text>
         <View style={[styles.dirBadge, { backgroundColor: dirColor + '20' }]}>
-          <Ionicons name={entry.direction === 'long' ? 'trending-up' : 'trending-down'} size={14} color={dirColor} />
+          <Icon name={entry.direction === 'long' ? 'trending-up' : 'trending-down'} size={14} color={dirColor} />
           <Text style={[styles.dirText, { color: dirColor }]}>{entry.direction === 'long' ? 'LONG' : 'SHORT'}</Text>
         </View>
         {entry.outcome ? (

@@ -11,7 +11,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@/components/Icon';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
@@ -128,7 +128,7 @@ export default function WatchlistScreen() {
             onPress={() => setShowModal(true)}
             style={({ pressed }) => [styles.addBtn, { backgroundColor: colors.primary, opacity: pressed ? 0.8 : 1 }]}
           >
-            <Ionicons name="add" size={22} color={colors.primaryForeground} />
+            <Icon name="add" size={22} color={colors.primaryForeground} />
           </Pressable>
         </View>
 
@@ -174,10 +174,10 @@ export default function WatchlistScreen() {
                       />
                       <Pressable onPress={() => handleSaveTarget(item.id)}
                         style={[styles.targetSaveBtn, { backgroundColor: colors.primary }]}>
-                        <Ionicons name="checkmark" size={14} color={colors.primaryForeground} />
+                        <Icon name="checkmark" size={14} color={colors.primaryForeground} />
                       </Pressable>
                       <Pressable onPress={() => setEditTargetId(null)} hitSlop={8}>
-                        <Ionicons name="close" size={16} color={colors.mutedForeground} />
+                        <Icon name="close" size={16} color={colors.mutedForeground} />
                       </Pressable>
                     </View>
                   ) : (
@@ -187,7 +187,7 @@ export default function WatchlistScreen() {
                     >
                       {item.targetPrice ? (
                         <View style={[styles.targetBadge, { backgroundColor: colors.gold + '20', borderColor: colors.gold + '50' }]}>
-                          <Ionicons name="flag-outline" size={11} color={colors.gold} />
+                          <Icon name="flag-outline" size={11} color={colors.gold} />
                           <Text style={[styles.targetText, { color: colors.gold }]}>Target: {item.targetPrice}</Text>
                         </View>
                       ) : (
@@ -202,7 +202,7 @@ export default function WatchlistScreen() {
                   </Text>
                 </View>
                 <Pressable onPress={() => handleRemove(item.id, item.symbol)} hitSlop={10}>
-                  <Ionicons name="trash-outline" size={18} color={colors.destructive} />
+                  <Icon name="trash-outline" size={18} color={colors.destructive} />
                 </Pressable>
               </View>
             );
@@ -217,7 +217,7 @@ export default function WatchlistScreen() {
             <View style={styles.modalHeader}>
               <Text style={[styles.modalTitle, { color: colors.foreground }]}>Add Symbol</Text>
               <Pressable onPress={() => setShowModal(false)}>
-                <Ionicons name="close" size={24} color={colors.mutedForeground} />
+                <Icon name="close" size={24} color={colors.mutedForeground} />
               </Pressable>
             </View>
 

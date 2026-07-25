@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@/components/Icon';
 import ReanimatedSwipeable, { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Animated, { SharedValue, useAnimatedStyle } from 'react-native-reanimated';
 import { useColors } from '@/hooks/useColors';
@@ -56,7 +56,7 @@ function RightAction({
           onDelete?.();
         }}
       >
-        <Ionicons name="trash-outline" size={20} color="#fff" />
+        <Icon name="trash-outline" size={20} color="#fff" />
         <Text style={styles.deleteBtnText}>Delete</Text>
       </Pressable>
     </Animated.View>
@@ -146,7 +146,7 @@ export function AnalysisCard({ analysis, onPress, onDelete, isSuperseded = false
           ) : null}
           {analysis.tradeDirection && analysis.tradeDirection !== 'wait' ? (
             <View style={styles.tradeRow}>
-              <Ionicons
+              <Icon
                 name={analysis.tradeDirection === 'long' ? 'arrow-up-circle' : 'arrow-down-circle'}
                 size={14}
                 color={analysis.tradeDirection === 'long' ? colors.bullish : colors.bearish}
@@ -167,7 +167,7 @@ export function AnalysisCard({ analysis, onPress, onDelete, isSuperseded = false
         <Text style={[styles.pending, { color: colors.bearish }]}>Analysis failed</Text>
       )}
 
-      <Ionicons
+      <Icon
         name="chevron-forward"
         size={16}
         color={colors.mutedForeground}

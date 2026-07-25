@@ -9,7 +9,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@/components/Icon';
 import * as Haptics from 'expo-haptics';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -116,7 +116,7 @@ export default function NewJournalScreen() {
     >
       <View style={styles.nav}>
         <Pressable onPress={() => router.back()} hitSlop={12}>
-          <Ionicons name="arrow-back" size={24} color={colors.foreground} />
+          <Icon name="arrow-back" size={24} color={colors.foreground} />
         </Pressable>
         <Text style={[styles.navTitle, { color: colors.foreground }]}>Log Trade</Text>
         <Pressable
@@ -148,7 +148,7 @@ export default function NewJournalScreen() {
                 },
               ]}
             >
-              <Ionicons name={d === 'long' ? 'trending-up' : 'trending-down'} size={16} color={direction === d ? '#fff' : colors.mutedForeground} />
+              <Icon name={d === 'long' ? 'trending-up' : 'trending-down'} size={16} color={direction === d ? '#fff' : colors.mutedForeground} />
               <Text style={[styles.segmentText, { color: direction === d ? '#fff' : colors.foreground }]}>
                 {d === 'long' ? 'Long' : 'Short'}
               </Text>

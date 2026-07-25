@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@/components/Icon';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
@@ -59,7 +59,7 @@ export default function JournalScreen() {
             onPress={() => router.push('/journal/new')}
             style={({ pressed }) => [styles.addBtn, { backgroundColor: colors.primary, opacity: pressed ? 0.8 : 1 }]}
           >
-            <Ionicons name="add" size={22} color={colors.primaryForeground} />
+            <Icon name="add" size={22} color={colors.primaryForeground} />
           </Pressable>
         </View>
 

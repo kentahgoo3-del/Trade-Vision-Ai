@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@/components/Icon';
 import { useColors } from '@/hooks/useColors';
 
 interface Props {
@@ -8,8 +8,8 @@ interface Props {
   value: string;
   sub?: string;
   accent?: 'primary' | 'gold' | 'bullish' | 'bearish' | 'neutral';
-  /** Optional Ionicons name rendered inline after the value */
-  iconName?: React.ComponentProps<typeof Ionicons>['name'];
+  /** Optional icon name rendered inline after the value */
+  iconName?: string;
 }
 
 export function StatCard({ label, value, sub, accent = 'primary', iconName }: Props) {
@@ -27,7 +27,7 @@ export function StatCard({ label, value, sub, accent = 'primary', iconName }: Pr
       <Text style={[styles.label, { color: colors.mutedForeground }]}>{label}</Text>
       <View style={styles.valueRow}>
         <Text style={[styles.value, { color: accentColor }]}>{value}</Text>
-        {iconName ? <Ionicons name={iconName} size={20} color={accentColor} style={styles.icon} /> : null}
+        {iconName ? <Icon name={iconName} size={20} color={accentColor} style={styles.icon} /> : null}
       </View>
       {sub ? <Text style={[styles.sub, { color: colors.mutedForeground }]}>{sub}</Text> : null}
     </View>

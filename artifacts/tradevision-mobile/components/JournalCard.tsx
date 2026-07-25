@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@/components/Icon';
 import { useColors } from '@/hooks/useColors';
 import type { JournalEntry } from '@workspace/api-client-react';
 
@@ -37,7 +37,7 @@ export function JournalCard({ entry, onPress }: Props) {
           <View style={styles.symbolRow}>
             <Text style={[styles.symbol, { color: colors.foreground }]}>{entry.symbol}</Text>
             <View style={[styles.dirBadge, { backgroundColor: dirColor + '20' }]}>
-              <Ionicons
+              <Icon
                 name={entry.direction === 'long' ? 'trending-up' : 'trending-down'}
                 size={11}
                 color={dirColor}
