@@ -1,6 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Platform,
   Pressable,
@@ -19,6 +20,7 @@ import { useColors } from '@/hooks/useColors';
 import {
   useListOpenaiConversations,
   useCreateOpenaiConversation,
+  useDeleteOpenaiConversation,
   getListOpenaiConversationsQueryKey,
 } from '@workspace/api-client-react';
 
@@ -40,6 +42,7 @@ export default function ChatScreen() {
 
   const { data: convos, isLoading: convosLoading } = useListOpenaiConversations();
   const { mutateAsync: createConvo } = useCreateOpenaiConversation();
+  const { mutateAsync: deleteConvo } = useDeleteOpenaiConversation();
 
   const [activeConvoId, setActiveConvoId] = useState<number | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -57,6 +60,24 @@ export default function ChatScreen() {
     setActiveConvoId(convo.id);
     setMessages([]);
   }, [createConvo, queryClient]);
+
+  const confirmDeleteConvo = useCallback((id: number, title: string) => {
+    Alert.alert(
+      'Delete conversation?',
+      `"${title}" will be permanently removed.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            await deleteConvo({ id });
+            queryClient.invalidateQueries({ queryKey: getListOpenaiConversationsQueryKey() });
+          },
+        },
+      ]
+    );
+  }, [deleteConvo, queryClient]);
 
   const openConversation = useCallback(async (id: number) => {
     try {
@@ -196,21 +217,30 @@ export default function ChatScreen() {
             keyExtractor={(c) => String(c.id)}
             contentContainerStyle={[styles.convoList, { paddingBottom: bottomPad + 100 }]}
             renderItem={({ item }) => (
-              <Pressable
-                onPress={() => openConversation(item.id)}
-                style={({ pressed }) => [styles.convoRow, { backgroundColor: colors.card, borderColor: colors.border, opacity: pressed ? 0.85 : 1 }]}
-              >
-                <View style={[styles.convoIcon, { backgroundColor: colors.primary + '15' }]}>
-                  <Icon name="chatbubble-outline" size={20} color={colors.primary} />
-                </View>
-                <View style={styles.convoInfo}>
-                  <Text style={[styles.convoTitle, { color: colors.foreground }]}>{item.title}</Text>
-                  <Text style={[styles.convoDate, { color: colors.mutedForeground }]}>
-                    {new Date(item.createdAt).toLocaleDateString()}
-                  </Text>
-                </View>
-                <Icon name="chevron-forward" size={18} color={colors.mutedForeground} />
-              </Pressable>
+              <View style={[styles.convoRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                <Pressable
+                  onPress={() => openConversation(item.id)}
+                  style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 }}
+                >
+                  <View style={[styles.convoIcon, { backgroundColor: colors.primary + '15' }]}>
+                    <Icon name="chatbubble-outline" size={20} color={colors.primary} />
+                  </View>
+                  <View style={styles.convoInfo}>
+                    <Text style={[styles.convoTitle, { color: colors.foreground }]}>{item.title}</Text>
+                    <Text style={[styles.convoDate, { color: colors.mutedForeground }]}>
+                      {new Date(item.createdAt).toLocaleDateString()}
+                    </Text>
+                  </View>
+                  <Icon name="chevron-forward" size={18} color={colors.mutedForeground} />
+                </Pressable>
+                <Pressable
+                  onPress={() => confirmDeleteConvo(item.id, item.title)}
+                  hitSlop={8}
+                  style={({ pressed }) => [styles.deleteBtn, { backgroundColor: colors.bearish + '15', opacity: pressed ? 0.7 : 1 }]}
+                >
+                  <Icon name="trash-outline" size={16} color={colors.bearish} />
+                </Pressable>
+              </View>
             )}
           />
         )}
@@ -305,7 +335,8 @@ const styles = StyleSheet.create({
   newChatBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: 14, marginBottom: 20 },
   newChatText: { fontSize: 16, fontFamily: 'Inter_600SemiBold' },
   convoList: { paddingHorizontal: 16, gap: 0 },
-  convoRow: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, borderWidth: 1, padding: 16, marginBottom: 10 },
+  convoRow: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 14, borderWidth: 1, padding: 16, marginBottom: 10, paddingRight: 12 },
+  deleteBtn: { width: 34, height: 34, borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginLeft: 8 },
   convoIcon: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
   convoInfo: { flex: 1 },
   convoTitle: { fontSize: 15, fontFamily: 'Inter_600SemiBold' },
