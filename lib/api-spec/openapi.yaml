@@ -552,6 +552,53 @@ components:
           type: ["string", "null"]
         invalidationLevel:
           type: ["string", "null"]
+        # AI Decision Engine fields
+        tradeDecision:
+          type: ["string", "null"]
+        overallScore:
+          type: ["integer", "null"]
+        confidenceBreakdown:
+          type: ["object", "null"]
+          additionalProperties: true
+        tradePlan:
+          type: ["object", "null"]
+          additionalProperties: true
+        scenarios:
+          type: ["array", "null"]
+          items:
+            type: object
+            additionalProperties: true
+        marketPsychology:
+          type: ["array", "null"]
+          items:
+            type: string
+        tradeChecklist:
+          type: ["object", "null"]
+          additionalProperties: true
+        multiTimeframe:
+          type: ["array", "null"]
+          items:
+            type: object
+            additionalProperties: true
+        riskBreakdown:
+          type: ["object", "null"]
+          additionalProperties: true
+        tradeQualityStars:
+          type: ["integer", "null"]
+        coachAdvice:
+          type: ["array", "null"]
+          items:
+            type: string
+        patternExplanations:
+          type: ["array", "null"]
+          items:
+            type: object
+            additionalProperties: true
+        beginnerExplanation:
+          type: ["string", "null"]
+        newsSentiment:
+          type: ["object", "null"]
+          additionalProperties: true
         createdAt:
           type: string
           format: date-time

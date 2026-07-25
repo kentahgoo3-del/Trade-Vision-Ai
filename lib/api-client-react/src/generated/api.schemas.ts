@@ -22,6 +22,37 @@ export const AnalysisStatus = {
   error: 'error',
 } as const;
 
+/**
+ * @nullable
+ */
+export type AnalysisConfidenceBreakdown = { [key: string]: unknown } | null;
+
+/**
+ * @nullable
+ */
+export type AnalysisTradePlan = { [key: string]: unknown } | null;
+
+export type AnalysisScenariosItem = { [key: string]: unknown };
+
+/**
+ * @nullable
+ */
+export type AnalysisTradeChecklist = { [key: string]: unknown } | null;
+
+export type AnalysisMultiTimeframeItem = { [key: string]: unknown };
+
+/**
+ * @nullable
+ */
+export type AnalysisRiskBreakdown = { [key: string]: unknown } | null;
+
+export type AnalysisPatternExplanationsItem = { [key: string]: unknown };
+
+/**
+ * @nullable
+ */
+export type AnalysisNewsSentiment = { [key: string]: unknown } | null;
+
 export interface Analysis {
   id: number;
   /** @nullable */
@@ -73,6 +104,34 @@ export interface Analysis {
   risks?: string | null;
   /** @nullable */
   invalidationLevel?: string | null;
+  /** @nullable */
+  tradeDecision?: string | null;
+  /** @nullable */
+  overallScore?: number | null;
+  /** @nullable */
+  confidenceBreakdown?: AnalysisConfidenceBreakdown;
+  /** @nullable */
+  tradePlan?: AnalysisTradePlan;
+  /** @nullable */
+  scenarios?: AnalysisScenariosItem[] | null;
+  /** @nullable */
+  marketPsychology?: string[] | null;
+  /** @nullable */
+  tradeChecklist?: AnalysisTradeChecklist;
+  /** @nullable */
+  multiTimeframe?: AnalysisMultiTimeframeItem[] | null;
+  /** @nullable */
+  riskBreakdown?: AnalysisRiskBreakdown;
+  /** @nullable */
+  tradeQualityStars?: number | null;
+  /** @nullable */
+  coachAdvice?: string[] | null;
+  /** @nullable */
+  patternExplanations?: AnalysisPatternExplanationsItem[] | null;
+  /** @nullable */
+  beginnerExplanation?: string | null;
+  /** @nullable */
+  newsSentiment?: AnalysisNewsSentiment;
   createdAt: string;
 }
 

@@ -46,6 +46,20 @@ export const ListAnalysesResponseItem = zod.object({
   "weaknesses": zod.string().nullish(),
   "risks": zod.string().nullish(),
   "invalidationLevel": zod.string().nullish(),
+  "tradeDecision": zod.string().nullish(),
+  "overallScore": zod.number().nullish(),
+  "confidenceBreakdown": zod.record(zod.string(), zod.unknown()).nullish(),
+  "tradePlan": zod.record(zod.string(), zod.unknown()).nullish(),
+  "scenarios": zod.array(zod.record(zod.string(), zod.unknown())).nullish(),
+  "marketPsychology": zod.array(zod.string()).nullish(),
+  "tradeChecklist": zod.record(zod.string(), zod.unknown()).nullish(),
+  "multiTimeframe": zod.array(zod.record(zod.string(), zod.unknown())).nullish(),
+  "riskBreakdown": zod.record(zod.string(), zod.unknown()).nullish(),
+  "tradeQualityStars": zod.number().nullish(),
+  "coachAdvice": zod.array(zod.string()).nullish(),
+  "patternExplanations": zod.array(zod.record(zod.string(), zod.unknown())).nullish(),
+  "beginnerExplanation": zod.string().nullish(),
+  "newsSentiment": zod.record(zod.string(), zod.unknown()).nullish(),
   "createdAt": zod.coerce.date()
 })
 export const ListAnalysesResponse = zod.array(ListAnalysesResponseItem)
@@ -87,6 +101,20 @@ export const CreateAnalysisResponse = zod.object({
   "weaknesses": zod.string().nullish(),
   "risks": zod.string().nullish(),
   "invalidationLevel": zod.string().nullish(),
+  "tradeDecision": zod.string().nullish(),
+  "overallScore": zod.number().nullish(),
+  "confidenceBreakdown": zod.record(zod.string(), zod.unknown()).nullish(),
+  "tradePlan": zod.record(zod.string(), zod.unknown()).nullish(),
+  "scenarios": zod.array(zod.record(zod.string(), zod.unknown())).nullish(),
+  "marketPsychology": zod.array(zod.string()).nullish(),
+  "tradeChecklist": zod.record(zod.string(), zod.unknown()).nullish(),
+  "multiTimeframe": zod.array(zod.record(zod.string(), zod.unknown())).nullish(),
+  "riskBreakdown": zod.record(zod.string(), zod.unknown()).nullish(),
+  "tradeQualityStars": zod.number().nullish(),
+  "coachAdvice": zod.array(zod.string()).nullish(),
+  "patternExplanations": zod.array(zod.record(zod.string(), zod.unknown())).nullish(),
+  "beginnerExplanation": zod.string().nullish(),
+  "newsSentiment": zod.record(zod.string(), zod.unknown()).nullish(),
   "createdAt": zod.coerce.date()
 })
 
@@ -137,6 +165,20 @@ export const ListRecentAnalysesResponseItem = zod.object({
   "weaknesses": zod.string().nullish(),
   "risks": zod.string().nullish(),
   "invalidationLevel": zod.string().nullish(),
+  "tradeDecision": zod.string().nullish(),
+  "overallScore": zod.number().nullish(),
+  "confidenceBreakdown": zod.record(zod.string(), zod.unknown()).nullish(),
+  "tradePlan": zod.record(zod.string(), zod.unknown()).nullish(),
+  "scenarios": zod.array(zod.record(zod.string(), zod.unknown())).nullish(),
+  "marketPsychology": zod.array(zod.string()).nullish(),
+  "tradeChecklist": zod.record(zod.string(), zod.unknown()).nullish(),
+  "multiTimeframe": zod.array(zod.record(zod.string(), zod.unknown())).nullish(),
+  "riskBreakdown": zod.record(zod.string(), zod.unknown()).nullish(),
+  "tradeQualityStars": zod.number().nullish(),
+  "coachAdvice": zod.array(zod.string()).nullish(),
+  "patternExplanations": zod.array(zod.record(zod.string(), zod.unknown())).nullish(),
+  "beginnerExplanation": zod.string().nullish(),
+  "newsSentiment": zod.record(zod.string(), zod.unknown()).nullish(),
   "createdAt": zod.coerce.date()
 })
 export const ListRecentAnalysesResponse = zod.array(ListRecentAnalysesResponseItem)
@@ -176,6 +218,20 @@ export const GetAnalysisResponse = zod.object({
   "weaknesses": zod.string().nullish(),
   "risks": zod.string().nullish(),
   "invalidationLevel": zod.string().nullish(),
+  "tradeDecision": zod.string().nullish(),
+  "overallScore": zod.number().nullish(),
+  "confidenceBreakdown": zod.record(zod.string(), zod.unknown()).nullish(),
+  "tradePlan": zod.record(zod.string(), zod.unknown()).nullish(),
+  "scenarios": zod.array(zod.record(zod.string(), zod.unknown())).nullish(),
+  "marketPsychology": zod.array(zod.string()).nullish(),
+  "tradeChecklist": zod.record(zod.string(), zod.unknown()).nullish(),
+  "multiTimeframe": zod.array(zod.record(zod.string(), zod.unknown())).nullish(),
+  "riskBreakdown": zod.record(zod.string(), zod.unknown()).nullish(),
+  "tradeQualityStars": zod.number().nullish(),
+  "coachAdvice": zod.array(zod.string()).nullish(),
+  "patternExplanations": zod.array(zod.record(zod.string(), zod.unknown())).nullish(),
+  "beginnerExplanation": zod.string().nullish(),
+  "newsSentiment": zod.record(zod.string(), zod.unknown()).nullish(),
   "createdAt": zod.coerce.date()
 })
 

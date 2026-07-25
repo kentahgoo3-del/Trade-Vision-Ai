@@ -7,10 +7,18 @@
  */
 
 export * from './analysis';
+export * from './analysisConfidenceBreakdown';
 export * from './analysisInput';
+export * from './analysisMultiTimeframeItem';
+export * from './analysisNewsSentiment';
+export * from './analysisPatternExplanationsItem';
+export * from './analysisRiskBreakdown';
+export * from './analysisScenariosItem';
 export * from './analysisStats';
 export * from './analysisStatsTopPatternsItem';
 export * from './analysisStatus';
+export * from './analysisTradeChecklist';
+export * from './analysisTradePlan';
 export * from './apiError';
 export * from './equityPoint';
 export * from './healthStatus';

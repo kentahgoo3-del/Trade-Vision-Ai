@@ -5,7 +5,15 @@
  * TradeVision AI Pro API
  * OpenAPI spec version: 0.1.0
  */
+import type { AnalysisConfidenceBreakdown } from './analysisConfidenceBreakdown';
+import type { AnalysisMultiTimeframeItem } from './analysisMultiTimeframeItem';
+import type { AnalysisNewsSentiment } from './analysisNewsSentiment';
+import type { AnalysisPatternExplanationsItem } from './analysisPatternExplanationsItem';
+import type { AnalysisRiskBreakdown } from './analysisRiskBreakdown';
+import type { AnalysisScenariosItem } from './analysisScenariosItem';
 import type { AnalysisStatus } from './analysisStatus';
+import type { AnalysisTradeChecklist } from './analysisTradeChecklist';
+import type { AnalysisTradePlan } from './analysisTradePlan';
 
 export interface Analysis {
   id: number;
@@ -58,5 +66,33 @@ export interface Analysis {
   risks?: string | null;
   /** @nullable */
   invalidationLevel?: string | null;
+  /** @nullable */
+  tradeDecision?: string | null;
+  /** @nullable */
+  overallScore?: number | null;
+  /** @nullable */
+  confidenceBreakdown?: AnalysisConfidenceBreakdown;
+  /** @nullable */
+  tradePlan?: AnalysisTradePlan;
+  /** @nullable */
+  scenarios?: AnalysisScenariosItem[] | null;
+  /** @nullable */
+  marketPsychology?: string[] | null;
+  /** @nullable */
+  tradeChecklist?: AnalysisTradeChecklist;
+  /** @nullable */
+  multiTimeframe?: AnalysisMultiTimeframeItem[] | null;
+  /** @nullable */
+  riskBreakdown?: AnalysisRiskBreakdown;
+  /** @nullable */
+  tradeQualityStars?: number | null;
+  /** @nullable */
+  coachAdvice?: string[] | null;
+  /** @nullable */
+  patternExplanations?: AnalysisPatternExplanationsItem[] | null;
+  /** @nullable */
+  beginnerExplanation?: string | null;
+  /** @nullable */
+  newsSentiment?: AnalysisNewsSentiment;
   createdAt: Date;
 }
