@@ -17,11 +17,12 @@ import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useColors } from '@/hooks/useColors';
-import { useCreateAnalysis, useListAnalyses } from '@workspace/api-client-react';
+import { useCreateAnalysis, useListAnalyses, useDeleteAnalysis } from '@workspace/api-client-react';
 import { AnalysisCard } from '@/components/AnalysisCard';
 import { EmptyState } from '@/components/EmptyState';
 import { useQueryClient } from '@tanstack/react-query';
 import { getListAnalysesQueryKey, getListRecentAnalysesQueryKey, getGetPortfolioSummaryQueryKey } from '@workspace/api-client-react';
+import type { Analysis } from '@workspace/api-client-react';
 
 const TIMEFRAMES = ['1m', '5m', '15m', '1H', '4H', '1D', '1W'];
 
@@ -38,6 +39,7 @@ export default function AnalyzeScreen() {
 
   const { data: analyses, isLoading: listLoading } = useListAnalyses();
   const { mutateAsync: createAnalysis, isPending } = useCreateAnalysis();
+  const { mutateAsync: deleteAnalysis } = useDeleteAnalysis();
 
   // Compute the set of superseded analysis IDs.
   // An error or pending analysis is superseded when a newer analysis for the
@@ -59,6 +61,48 @@ export default function AnalyzeScreen() {
   }, [analyses]);
 
   const topPad = Platform.OS === 'web' ? 67 : insets.top;
+
+  const handleDelete = async (id: string) => {
+    // Optimistic removal from cache
+    const prevData = queryClient.getQueryData<Analysis[]>(getListAnalysesQueryKey());
+    queryClient.setQueryData<Analysis[]>(getListAnalysesQueryKey(), (old) =>
+      old ? old.filter((a) => a.id !== id) : old
+    );
+    try {
+      await deleteAnalysis({ id: Number(id) });
+      queryClient.invalidateQueries({ queryKey: getListAnalysesQueryKey() });
+      queryClient.invalidateQueries({ queryKey: getListRecentAnalysesQueryKey() });
+      queryClient.invalidateQueries({ queryKey: getGetPortfolioSummaryQueryKey() });
+    } catch {
+      // Rollback on failure
+      queryClient.setQueryData(getListAnalysesQueryKey(), prevData);
+      Alert.alert('Error', 'Could not delete the analysis. Please try again.');
+    }
+  };
+
+  const handleClearFailed = async () => {
+    const failedIds = (analyses ?? [])
+      .filter((a) => a.status === 'error')
+      .map((a) => a.id);
+    if (failedIds.length === 0) return;
+
+    // Optimistic removal
+    const prevData = queryClient.getQueryData<Analysis[]>(getListAnalysesQueryKey());
+    queryClient.setQueryData<Analysis[]>(getListAnalysesQueryKey(), (old) =>
+      old ? old.filter((a) => !failedIds.includes(a.id)) : old
+    );
+    try {
+      await Promise.all(failedIds.map((id) => deleteAnalysis({ id: Number(id) })));
+      queryClient.invalidateQueries({ queryKey: getListAnalysesQueryKey() });
+      queryClient.invalidateQueries({ queryKey: getListRecentAnalysesQueryKey() });
+      queryClient.invalidateQueries({ queryKey: getGetPortfolioSummaryQueryKey() });
+    } catch {
+      queryClient.setQueryData(getListAnalysesQueryKey(), prevData);
+      Alert.alert('Error', 'Could not clear failed analyses. Please try again.');
+    }
+  };
+
+  const failedCount = (analyses ?? []).filter((a) => a.status === 'error').length;
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -232,7 +276,23 @@ export default function AnalyzeScreen() {
 
       {/* History */}
       <View style={styles.history}>
-        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Analysis History</Text>
+        <View style={styles.historyHeader}>
+          <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Analysis History</Text>
+          {failedCount > 0 && (
+            <Pressable
+              onPress={handleClearFailed}
+              style={({ pressed }) => [
+                styles.clearFailedBtn,
+                { borderColor: colors.destructive, opacity: pressed ? 0.7 : 1 },
+              ]}
+            >
+              <Ionicons name="trash-outline" size={13} color={colors.destructive} />
+              <Text style={[styles.clearFailedText, { color: colors.destructive }]}>
+                Clear failed ({failedCount})
+              </Text>
+            </Pressable>
+          )}
+        </View>
         {listLoading ? (
           <ActivityIndicator color={colors.primary} style={{ marginTop: 20 }} />
         ) : !analyses?.length ? (
@@ -250,6 +310,7 @@ export default function AnalyzeScreen() {
               analysis={a}
               isSuperseded={supersededIds.has(a.id)}
               onPress={() => router.push(`/analysis/${a.id}`)}
+              onDelete={() => handleDelete(a.id)}
             />
           ))
         )}
@@ -284,5 +345,16 @@ const styles = StyleSheet.create({
   analyzeBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 16, borderRadius: 16 },
   analyzeBtnText: { fontSize: 16, fontFamily: 'Inter_600SemiBold' },
   history: { gap: 0, marginTop: 8 },
-  sectionTitle: { fontSize: 18, fontFamily: 'Inter_700Bold', marginBottom: 14 },
+  historyHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 },
+  sectionTitle: { fontSize: 18, fontFamily: 'Inter_700Bold' },
+  clearFailedBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  clearFailedText: { fontSize: 12, fontFamily: 'Inter_600SemiBold' },
 });

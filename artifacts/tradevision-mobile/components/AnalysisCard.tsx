@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import ReanimatedSwipeable, { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Animated, { SharedValue, useAnimatedStyle } from 'react-native-reanimated';
 import { useColors } from '@/hooks/useColors';
 import { TrendBadge } from './TrendBadge';
 import { ConfidenceMeter } from './ConfidenceMeter';
@@ -9,6 +11,7 @@ import type { Analysis } from '@workspace/api-client-react';
 interface Props {
   analysis: Analysis;
   onPress?: () => void;
+  onDelete?: () => void;
   isSuperseded?: boolean;
 }
 
@@ -31,9 +34,39 @@ function useDecisionColors(colors: ReturnType<typeof useColors>) {
   };
 }
 
-export function AnalysisCard({ analysis, onPress, isSuperseded = false }: Props) {
+function RightAction({
+  drag,
+  onDelete,
+  swipeableRef,
+}: {
+  drag: SharedValue<number>;
+  onDelete?: () => void;
+  swipeableRef: React.RefObject<SwipeableMethods | null>;
+}) {
+  const colors = useColors();
+  const style = useAnimatedStyle(() => ({
+    transform: [{ translateX: drag.value + 72 }],
+  }));
+  return (
+    <Animated.View style={[styles.deleteAction, style]}>
+      <Pressable
+        style={[styles.deleteBtn, { backgroundColor: colors.destructive }]}
+        onPress={() => {
+          swipeableRef.current?.close();
+          onDelete?.();
+        }}
+      >
+        <Ionicons name="trash-outline" size={20} color="#fff" />
+        <Text style={styles.deleteBtnText}>Delete</Text>
+      </Pressable>
+    </Animated.View>
+  );
+}
+
+export function AnalysisCard({ analysis, onPress, onDelete, isSuperseded = false }: Props) {
   const colors = useColors();
   const getDecisionColors = useDecisionColors(colors);
+  const swipeableRef = useRef<SwipeableMethods | null>(null);
 
   const timeAgo = (dateStr: string) => {
     const diff = Date.now() - new Date(dateStr).getTime();
@@ -47,7 +80,7 @@ export function AnalysisCard({ analysis, onPress, isSuperseded = false }: Props)
   const hasDecision = analysis.status === 'complete' && analysis.tradeDecision;
   const decisionColors = getDecisionColors(analysis.tradeDecision);
 
-  return (
+  const card = (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [
@@ -142,6 +175,21 @@ export function AnalysisCard({ analysis, onPress, isSuperseded = false }: Props)
       />
     </Pressable>
   );
+
+  if (!onDelete) return card;
+
+  return (
+    <ReanimatedSwipeable
+      ref={swipeableRef}
+      friction={2}
+      rightThreshold={40}
+      renderRightActions={(_, drag) => (
+        <RightAction drag={drag} onDelete={onDelete} swipeableRef={swipeableRef} />
+      )}
+    >
+      {card}
+    </ReanimatedSwipeable>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -180,4 +228,23 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   supersededText: { fontSize: 10, fontFamily: 'Inter_500Medium', letterSpacing: 0.3 },
+  deleteAction: {
+    width: 72,
+    marginBottom: 10,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  deleteBtn: {
+    width: 72,
+    height: '100%',
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+  },
+  deleteBtnText: {
+    color: '#fff',
+    fontSize: 11,
+    fontFamily: 'Inter_600SemiBold',
+  },
 });
