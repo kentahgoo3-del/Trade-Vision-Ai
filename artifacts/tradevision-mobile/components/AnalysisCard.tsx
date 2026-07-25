@@ -56,8 +56,8 @@ function RightAction({
           onDelete?.();
         }}
       >
-        <Icon name="trash-outline" size={20} color="#fff" />
-        <Text style={styles.deleteBtnText}>Delete</Text>
+        <Icon name="trash-outline" size={20} color={colors.destructiveForeground} />
+        <Text style={[styles.deleteBtnText, { color: colors.destructiveForeground }]}>Delete</Text>
       </Pressable>
     </Animated.View>
   );
@@ -243,7 +243,6 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   deleteBtnText: {
-    color: '#fff',
     fontSize: 11,
     fontFamily: 'Inter_600SemiBold',
   },

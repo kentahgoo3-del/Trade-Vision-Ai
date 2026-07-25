@@ -262,7 +262,7 @@ export default function AnalyzeScreen() {
               onPress={() => { setImageUri(null); setImageBase64(null); }}
               style={[styles.clearBtn, { backgroundColor: colors.destructive }]}
             >
-              <Icon name="close" size={16} color="#fff" />
+              <Icon name="close" size={16} color={colors.destructiveForeground} />
             </Pressable>
           </View>
         ) : (

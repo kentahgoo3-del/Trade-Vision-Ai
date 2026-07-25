@@ -77,9 +77,8 @@ function parsePrice(s: string | null | undefined): number | null {
 
 // ── Score helpers ─────────────────────────────────────────────────────────────
 function scoreColor(score: number, colors: ReturnType<typeof useColors>) {
-  if (score >= 95) return '#00E5A0';
-  if (score >= 85) return colors.primary;
-  if (score >= 75) return '#84CC16';
+  if (score >= 85) return colors.bullish;
+  if (score >= 75) return colors.primary;
   if (score >= 60) return colors.gold;
   return colors.bearish;
 }

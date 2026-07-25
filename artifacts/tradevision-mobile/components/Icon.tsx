@@ -57,6 +57,9 @@ export function Icon({ name, size = 24, color = '#000', style }: Props) {
       case 'close-circle':
       case 'close-circle-outline':
         return <><Circle cx="12" cy="12" r="10" {...p}/><Path d="M9 9l6 6M15 9l-6 6" {...p}/></>;
+      case 'remove-circle':
+      case 'remove-circle-outline':
+        return <><Circle cx="12" cy="12" r="10" {...p}/><Path d="M8 12h8" {...p}/></>;
       case 'alert-circle':
         return <><Circle cx="12" cy="12" r="10" {...p}/><Path d="M12 8v4" {...p}/><Circle cx="12" cy="16" r="0.5" {...{...p, fill: color}}/></>;
       case 'warning':
