@@ -1,14 +1,15 @@
 import React from 'react';
-import { Platform, StyleSheet, useColorScheme, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { useColors } from '@/hooks/useColors';
+import { useTheme } from '@/contexts/ThemeContext';
 import { BlurView } from 'expo-blur';
 import { Tabs } from 'expo-router';
-import { HomeIcon, AnalyzeIcon, WatchlistIcon, JournalIcon, ChatIcon } from '@/components/TabIcon';
+import { HomeIcon, AnalyzeIcon, WatchlistIcon, JournalIcon, ChatIcon, SettingsIcon } from '@/components/TabIcon';
 
 export default function TabLayout() {
   const colors = useColors();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const { resolvedScheme } = useTheme();
+  const isDark = resolvedScheme === 'dark';
   const isIOS = Platform.OS === 'ios';
   const isWeb = Platform.OS === 'web';
 
@@ -80,6 +81,15 @@ export default function TabLayout() {
           title: 'AI Chat',
           tabBarIcon: ({ color, focused }) => (
             <ChatIcon color={color} size={24} focused={focused} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ color, focused }) => (
+            <SettingsIcon color={color} size={24} focused={focused} />
           ),
         }}
       />
