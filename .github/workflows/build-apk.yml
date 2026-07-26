@@ -50,6 +50,7 @@ jobs:
         working-directory: artifacts/tradevision-mobile
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          EXPO_PUBLIC_DOMAIN: code-creator-kentahgoo3.replit.app
         run: |
           eas build \
             --platform android \
